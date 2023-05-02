@@ -27,7 +27,7 @@ module.exports = (connection) => {
   });
 
   router.get("/", (req, res) => {
-    connection.query("");
+    res.json({ data: "ok" });
   });
 
   return router;
