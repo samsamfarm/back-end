@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/", (rep, res) => {
   const { title, content } = req.body;
   connection.query(
-    "INSERT INTO Posts (title,content)VALUES (??)",
+    "INSERT INTO Posts (title,content)VALUES (?, ?)",
     [title, content],
     (error, result) => {
       if (error) {
