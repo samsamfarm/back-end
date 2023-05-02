@@ -49,7 +49,10 @@ class App {
     // this.app.use('/api/users', usersRouter);
     // this.app.use('/posts', postsRouter);
 
-    this.app.use("/api/article", require("./routes/article")(this.connection));
+    this.app.use(
+      "/api/article",
+      require("./controllers/article")(this.connection)
+    );
   }
 
   registerErrorHandlers() {

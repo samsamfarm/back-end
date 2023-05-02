@@ -7,7 +7,7 @@
 // 댓글 삭제하기
 // 댓글 수정하기
 const express = require("express");
-
+////// 게시물 crud
 module.exports = (connection) => {
   const router = express.Router();
 
@@ -30,5 +30,14 @@ module.exports = (connection) => {
     res.json({ data: "ok" });
   });
 
+  router.fetch("/", (req, res) => {
+    res.json({ data: "ok" });
+  });
+
+  router.delete("/", (req, res) => {
+    res.json({ date: "ok" });
+  });
+
   return router;
 };
+///// 댓글 crud
