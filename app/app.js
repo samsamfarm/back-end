@@ -1,48 +1,97 @@
 require("dotenv").config();
 
-const express = require("express");
 const mysql = require("mysql2");
+const express = require("express");
+const cron = require("cron");
+const {
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalServerError,
+  NotFound,
+} = require("./errors");
 
-const port = process.env.APP_PORT;
+class App {
+  constructor() {
+    this.app = express();
+    this.port = process.env.PORT || 3000;
+    this.connection = mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      port: process.env.MYSQL_PORT,
+      database: process.env.MYSQL_DB,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PW,
+    });
 
-const app = express();
+    this.connection.connect((err) => {
+      if (err) {
+        console.error("Error connectiong to database", err);
+      } else {
+        console.log("Connectd to Database!");
+      }
+    });
 
-const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  port: process.env.MYSQL_PORT,
-  database: process.env.MYSQL_DB,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PW,
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error("Error connectiong to database", err);
-  } else {
-    console.log("Connectd to Database!");
+    this.registerMiddleware();
+    this.registerRoutes();
+    this.registerErrorHandlers();
+    this.startServer();
+    this.scheduleJobs();
   }
-});
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+  registerMiddleware() {
+    // Middlewares 등록
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+  }
 
-app.get("/TEST", (req, res) => {
-  connection.query("SELECT * FROM Users", (error, result) => {
-    if (error) {
-      console.error("디비 쿼리 에러", error);
-      res.status(500).send("삐~~ 에러");
-    } else {
-      res.json(result);
-      console.log(result);
-    }
-  });
-});
+  registerRoutes() {
+    // Routes 등록
+    // this.app.use('/api/users', usersRouter);
+    // this.app.use('/posts', postsRouter);
 
-const articleRouter = require("./routes/article");
+    this.app.use("/api/article", require("./routes/article")(this.connection));
+  }
 
-app.get("article", articleRouter);
+  registerErrorHandlers() {
+    // 에러 핸들러 등록
+    this.app.use((err, req, res, next) => {
+      if (err instanceof BadRequest) {
+        res.status(err.code).send({ message: err.message, errors: err.data });
+        return;
+      } else if (err instanceof Unauthorized) {
+        res.status(err.code).send({ message: err.message, errors: err.data });
+        return;
+      } else if (err instanceof Forbidden) {
+        res.status(err.code).send({ message: err.message, errors: err.data });
+        return;
+      } else if (err instanceof InternalServerError) {
+        res.status(err.code).send({ message: err.message, errors: err.data });
+        return;
+      } else if (err instanceof NotFound) {
+        res.status(err.code).send();
+        return;
+      } else {
+        console.error(err);
+        res.status(500).send({ message: "INTERNAL_SERVER_ERROR" });
+        return;
+      }
+    });
+  }
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+  startServer() {
+    // 서버 시작
+    this.app.listen(this.port, () => {
+      console.log(`Server started on port ${this.port}`);
+    });
+  }
+
+  scheduleJobs() {
+    // cron 스케줄 등록
+    const job = new cron.CronJob("*/1 * * * *", () => {
+      console.log(`The time is now ${new Date()}`);
+    });
+    job.start();
+  }
+}
+
+new App();

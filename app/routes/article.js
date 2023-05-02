@@ -6,28 +6,29 @@
 // 댓글 추가하기
 // 댓글 삭제하기
 // 댓글 수정하기
+const express = require("express");
 
-const connection = require("../app.js");
-const router = express.Router();
+module.exports = (connection) => {
+  const router = express.Router();
 
-router.post("/", (rep, res) => {
-  const { title, content } = req.body;
-  connection.query(
-    "INSERT INTO Posts (title,content)VALUES (?, ?)",
-    [title, content],
-    (error, result) => {
-      if (error) {
-        console.error("insert error", error);
-        res.status(500).send("error");
-      } else {
-        res.status(200).send("create article success");
-      }
+  router.post("/", async (rep, res, next) => {
+    try {
+      const { title, content } = req.body;
+      const result = await connection.query(
+        `INSERT INTO posts (title, content) VALUES (?, ?)`,
+        [title, content]
+      );
+      console.log(result);
+
+      res.json({ data: "ok" });
+    } catch (error) {
+      next(error);
     }
-  );
-});
+  });
 
-router.get("/", (req, res) => {
-  connection.query("");
-});
+  router.get("/", (req, res) => {
+    connection.query("");
+  });
 
-exports.router = articleRouter;
+  return router;
+};
