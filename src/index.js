@@ -90,13 +90,17 @@ class App {
     // this.app.use('/api/users', usersRouter);
     // this.app.use('/posts', postsRouter);
 
+    this.app.use("api-docs", swaggerUi.serve, swaggerUi.setup(specs));
     this.app.use(
-      "api-docs",
-      swaggerUi.serve,
-      swaggerUi.setup(specs),
       "/api/article",
       require("./controllers/article")(this.connection)
     );
+    this.app.use("/api/auth", require("./controllers/auth")(this.connection));
+    this.app.use(
+      "/api/device",
+      require("./controllers/device")(this.connection)
+    );
+    this.app.use("/api/plant", require("./controllers/plant")(this.connection));
   }
 
   registerErrorHandlers() {
