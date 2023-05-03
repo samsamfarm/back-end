@@ -3,6 +3,47 @@ require("dotenv").config();
 const mysql = require("mysql2");
 const express = require("express");
 const cron = require("cron");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Samsamfarm API with Swagger",
+      version: "1.0.0",
+      description: "Samsamfarm API with Swagger",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Samsamfam server",
+      },
+    ],
+    tags: [
+      {
+        name: "article",
+        description: "About Article, Comment",
+      },
+      {
+        name: "auth",
+        description: "About User",
+      },
+      {
+        name: "device",
+        description: "About Actuator, Device",
+      },
+      {
+        name: "plant",
+        description: "About Plant, Guest_book,Plant log",
+      },
+    ],
+  },
+  api: ["./src/controllers/*.js"],
+};
+
+const specs = swaggerJsdoc(options);
+
 const {
   BadRequest,
   Unauthorized,
@@ -50,6 +91,9 @@ class App {
     // this.app.use('/posts', postsRouter);
 
     this.app.use(
+      "api-docs",
+      swaggerUi.serve,
+      swaggerUi.setup(specs),
       "/api/article",
       require("./controllers/article")(this.connection)
     );
