@@ -39,7 +39,7 @@ const options = {
       },
     ],
   },
-  api: ["./src/controllers/*.js"],
+  apis: ["./src/controllers/*.js"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -87,10 +87,10 @@ class App {
 
   registerRoutes() {
     // Routes 등록
-    // this.app.use('/api/users', usersRouter);
-    // this.app.use('/posts', postsRouter);
+    // this.app.use("/api/users", usersRouter);
+    // this.app.use("/posts", postsRouter);
 
-    this.app.use("api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
     this.app.use(
       "/api/article",
       require("./controllers/article")(this.connection)
