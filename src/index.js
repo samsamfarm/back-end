@@ -16,7 +16,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "http://34.64.51.215/samsamfarm/",
         description: "Samsamfam server",
       },
     ],
@@ -55,7 +55,7 @@ const {
 class App {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || 3000;
+    this.port = process.env.PORT || 5000;
     this.connection = mysql.createConnection({
       host: process.env.MYSQL_HOST,
       port: process.env.MYSQL_PORT,
