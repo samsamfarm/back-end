@@ -11,6 +11,9 @@
  *         id:
  *           type: number
  *           description: 게시글 고유 id입니다.
+ *         user_id:
+ *           type: number
+ *           description: 게시글의 유저 id 입니다.
  *         title:
  *           type: string
  *           description: 게시글 제목 입니다.
@@ -32,14 +35,6 @@
  *           type: string
  *           format: date
  *           description: 게시글이 삭제된 날짜 입니다.
- *       example:
- *         id: 4
- *         title: 게시물 제목
- *         content: 게시물 내용
- *         view_count: 203
- *         createdAt: 2023-05-03 20:24:43
- *         updated_at: 2023-05-04 20:24:43
- *         deleted_at:  2023-05-05 20:24:43
  */
 /**
  * @swagger
@@ -74,16 +69,21 @@
  *           type: string
  *           format: date
  *           description: 댓글이 삭제된 날짜 입니다.
- *       example:
- *         id: 4
- *         article_id: 5
- *         user_id: 3
- *         content: 댓글 내용
- *         createdAt: 2023-05-03 20:24:43
- *         updated_at: 2023-05-04 20:24:43
- *         deleted_at:  2023-05-05 20:24:43
  */
-
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     article_with_commets:
+ *       type: object
+ *       properties:
+ *         user:
+ *           $ref: '#/components/schemas/articles'
+ *           description: 게시물 입니다.
+ *         comment:
+ *           $ref: '#/components/schemas/commets'
+ *           description: 댓글 입니다.
+ */
 const express = require("express");
 
 module.exports = (connection) => {
@@ -92,7 +92,7 @@ module.exports = (connection) => {
   /**
    * @swagger
    
-   * /api/article/new-article:
+   * /api/article:
    *   post:
    *     summary: 새로운 게시물 작성
    *     tags: [article]
@@ -114,7 +114,7 @@ module.exports = (connection) => {
    *
    */
 
-  router.post("/new-article", async (rep, res, next) => {
+  router.post("/", async (rep, res, next) => {
     try {
       const { title, content } = req.body;
       const result = await connection.query(
@@ -134,7 +134,7 @@ module.exports = (connection) => {
   /**
    * @swagger
    
-   * /api/article/show-article:
+   * /api/article:
    *   get:
    *     summary: 전체 게시물을 불러오는 api 입니다
    *     tags: [article]
@@ -151,22 +151,53 @@ module.exports = (connection) => {
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/articles'
-   *       500:
-   *         description: 서버 에러 입니다.
-   *
+   *       400:
+   *         description: Invalid.
    */
 
-  router.get("/show-article", (req, res) => {
+  router.get("/", (req, res) => {
     res.json({ data: "ok" });
   });
 
-  //유저의 게시물 불러오기 + 댓글
   /**
    * @swagger
-   
-   * /api/article/show-article/:user-id:
+   * /api/article/:article-id:
    *   get:
-   *     summary: 유저의 게시물과 댓글을 불러오는 api 입니다
+   *     summary: 해당 게시물 id의 게시물과 댓글 불러오기
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/article_with_commets'
+   *     parameters:
+   *       - name: article-id
+   *         in: query
+   *         required: true
+   *         description: 게시물의 id
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: Success.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/article_with_commets'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.get("/:article-id", (req, res) => {
+    res.json({ data: "ok" });
+  });
+  /**
+   * @swagger
+   * /api/article/:article-id:
+   *   patch:
+   *     summary: 특정 게시물 수정
    *     tags: [article]
    *     requestBody:
    *       required: true
@@ -174,33 +205,89 @@ module.exports = (connection) => {
    *         application/json:
    *           schema:
    *             $ref: '#/components/schemas/articles'
+   *     parameters:
+   *       - name: article-id
+   *         in: query
+   *         required: true
+   *         description: 게시물의 id
+   *         schema:
+   *           type: number
    *     responses:
    *       200:
-   *         description: 게시물 조회 완료.
+   *         description: Success.
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/articles'
-   *       500:
-   *         description: 서버 에러 입니다.
+   *       400:
+   *         description: Invalid.
+   *
    *
    */
-  router.get("/show-article/:user-id", (req, res) => {
-    res.json({ data: "ok" });
-  });
-
-  // 게시물 수정
-
-  router.patch("/modify-article", (req, res) => {
+  router.patch("/:article-id", (req, res) => {
     res.json({ data: "ok" });
   });
   // 게시물 삭제
-  router.delete("/delete-article", (req, res) => {
+  /**
+   * @swagger
+   * /api/article/:article-id:
+   *   delete:
+   *     summary: 특정 게시물 삭제
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/articles'
+   *     parameters:
+   *       - name: article-id
+   *         in: query
+   *         required: true
+   *         description: 게시물의 id
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: Success.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/articles'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.delete("/:article-id", (req, res) => {
     res.json({ date: "ok" });
   });
 
   // 댓글 생성
-  router.post("/create-comment", async (req, res, next) => {
+  /**
+   * @swagger
+   * /api/article/comment:
+   *   post:
+   *     summary: 새로운 댓글 작성
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/comments'
+   *     responses:
+   *       200:
+   *         description: 새로운 댓글 작성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/comments'
+   *       400:
+   *         description: Invalid Article.
+   *
+   */
+  router.post("/comment", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
@@ -209,7 +296,38 @@ module.exports = (connection) => {
   });
 
   // 댓글 수정
-  router.patch("/modify-comment", async (req, res, next) => {
+  /**
+   * @swagger
+   * /api/article/comment/:comment-id:
+   *   patch:
+   *     summary: 특정 댓글 수정
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/comments'
+   *     parameters:
+   *       - name: comment-id
+   *         in: query
+   *         required: true
+   *         description: 댓글의 id
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: Success.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/comments'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.patch("/comment/:comment-id", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
@@ -217,7 +335,38 @@ module.exports = (connection) => {
     }
   });
   // 댓글 삭제
-  router.delete("/delete-comment", async (req, res, next) => {
+  /**
+   * @swagger
+   * /api/article/comment/:comment-id:
+   *   delete:
+   *     summary: 특정 댓글 수정
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/comments'
+   *     parameters:
+   *       - name: comment-id
+   *         in: query
+   *         required: true
+   *         description: 댓글의 id
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: Success.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/comments'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.delete("/comment/:comment-id", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {

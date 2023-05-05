@@ -19,13 +19,13 @@
  *           type: number
  *           description: 유저 고유id입니다.
  *         email:
- *           type: number
+ *           type: string
  *           description: 유저의 이메일입니다.
  *         name:
- *           type: number
+ *           type: string
  *           description: 유저의 이름입니다.
  *         nickname:
- *           type: number
+ *           type: string
  *           description: 유저의 닉네임입니다.
  *         password:
  *           type: string
@@ -49,73 +49,28 @@
  *           type: string
  *           format: date
  *           description: 유저 정보가 삭제된 날짜입니다.
- *       example:
- *         id: 4
- *         email: 5
- *         name: 온호성
- *         nickname: 핸섬호성
- *         password: thisispassword
- *         mbti: ENFP
- *         phone: 01012343214
- *         createdAt: 2023-05-03 20:24:43
- *         updated_at: 2023-05-04 20:24:43
- *         deleted_at:  2023-05-05 20:24:43
  */
 /**
  * @swagger
  * components:
  *   schemas:
- *     guest_books:
+ *     user_name:
  *       type: object
  *       required:
- *         - writer
- *         - content
+ *         - name
+ *         - nickname
  *       properties:
  *         id:
  *           type: number
- *           description: 방명록 고유 id입니다.
- *         plant_id:
- *           type: number
- *           description: 방명록이 남겨져있는 객체의 작물_id 입니다 .
- *         user_id:
- *           type: number
- *           description: 방명록이 남겨져있는 객체의 유저_id 입니다.
- *         home_user_id:
+ *           description: 유저 고유id입니다.
+ *         name:
  *           type: string
- *           description: 하나의 방명록 위에 존재하는 상위 방명록의 유저_id입니다.
- *         content:
+ *           description: 유저의 이름입니다.
+ *         nickname:
  *           type: string
- *           description: 방명록 id입니다.
- *         writer:
- *           type: string
- *           description: 방명록 작성자입니다
- *         is_edited:
- *           type: boolean
- *           description: 방명록이 수정여부를 나타냅니다.
- *         created_at:
- *           type: string
- *           format: date
- *           description: 방명록이 생성된 날짜 입니다.
- *         updated_at:
- *           type: string
- *           format: date
- *           description: 방명록이 업데이트 된 날짜 입니다.
- *         deleted_at:
- *           type: string
- *           format: date
- *           description: 방명록이 삭제된 날짜 입니다.
- *       example:
- *         id: 4
- *         plant_id: 5
- *         user_id: 3
- *         home_user_id: 2
- *         contents: ENFP
- *         writer: 01012343214
- *         is_edited: false
- *         createdAt: 2023-05-03 20:24:43
- *         updated_at: 2023-05-04 20:24:43
- *         deleted_at:  2023-05-05 20:24:43
+ *           description: 유저의 닉네임입니다.
  */
+
 const express = require("express");
 
 module.exports = (connection) => {

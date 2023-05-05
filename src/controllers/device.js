@@ -14,7 +14,7 @@
  *           type: number
  *           description: 디바이스 고유id 입니다.
  *         device_order:
- *           type: number
+ *           type: string
  *           description: 디바이스의 식별 번호 입니다.
  *         user_id:
  *           type: number
@@ -33,7 +33,7 @@
  *           description: 디바이스 정보 삭제된 날짜입니다.
  *       example:
  *         id: 4
- *         device_order: 5
+ *         device_order: a7
  *         user_id: 3
  *         createdAt: 2023-05-03 20:24:43
  *         updated_at: 2023-05-04 20:24:43
@@ -124,8 +124,40 @@
 const express = require("express");
 module.exports = (connection) => {
   const router = express.Router();
-  // 새로운 디바이스 생성
-  router.post("/new-device", async (req, res, next) => {
+
+  /**
+   * @swagger
+   * /api/device:
+   *   post:
+   *     summary: 새로운 디바이스 생성(새로운 회원에게 배정)
+   *     tags: [device]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/devices'
+   *     parameters:
+   *       - name: device_order
+   *         in: query
+   *         required: true
+   *         description: 디바이스 목록조회를 위한 디바이스의 번호
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: 디바이스 생성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/devices'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+
+  router.post("/", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
@@ -133,8 +165,69 @@ module.exports = (connection) => {
     }
   });
 
-  // 디바이스 정보 조회
-  router.get("/about-device", async (req, res, next) => {
+  /**
+   * @swagger
+   * /api/device:
+   *   get:
+   *     summary: 전체 디바이스 정보 조회
+   *     tags: [device]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/devices'
+   *     responses:
+   *       200:
+   *         description: 디바이스 생성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/devices'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.get("/", async (req, res, next) => {
+    try {
+      res.json({ data: "ok" });
+    } catch (error) {
+      next(err);
+    }
+  });
+  /**
+   * @swagger
+   * /api/:device-id:
+   *   get:
+   *     summary: 특정 디바이스 조회
+   *     tags: [device]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/devices'
+   *     parameters:
+   *       - name: device_order
+   *         in: query
+   *         required: true
+   *         description: 디바이스 목록조회를 위한 디바이스의 번호
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: 특정 디바이스 조회 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/devices'
+   *       400:
+   *         description: Invalid.
+   *
+   *
+   */
+  router.get("/:device-id", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
