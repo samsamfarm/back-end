@@ -16,7 +16,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://34.64.51.215/samsamfarm/",
+        url: "http://localhost:5000",
         description: "Samsamfam server",
       },
     ],
@@ -39,7 +39,13 @@ const options = {
       },
     ],
   },
-  apis: ["./controllers/*.js"],
+  apis: [
+    "./src/controllers/*.js",
+    "./src/services/*.js",
+    "./src/errors/*.js",
+    "./src/controllers/articleController/*.js",
+    "./src/controllers/plantController/*.js",
+  ],
 };
 
 const specs = swaggerJsdoc(options);
@@ -93,14 +99,17 @@ class App {
     this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
     this.app.use(
       "/api/article",
-      require("./controllers/article")(this.connection)
+      require("./controllers/articleController/article")(this.connection)
     );
     this.app.use("/api/auth", require("./controllers/auth")(this.connection));
     this.app.use(
       "/api/device",
       require("./controllers/device")(this.connection)
     );
-    this.app.use("/api/plant", require("./controllers/plant")(this.connection));
+    this.app.use(
+      "/api/plant",
+      require("./controllers/plantController/plant")(this.connection)
+    );
   }
 
   registerErrorHandlers() {

@@ -1,24 +1,22 @@
+// mqtt 데이터 받아오는 예시
+
 const mqtt = require("mqtt");
-
-const client = mqtt.connect();
-
-// 퍼블리셔 예시 --디바이스 영역
-setInterval(() => {
-  client.publish("location/device1/temperature", 25.6); // test 토픽으로 메시지:"hello mqtt"를 전송
-}, 2000);
-
-//구독자 예시 --백엔드 영역
-
+const client = mqtt.connect("mqtt://localhost");
 client.on("connect", () => {
-  client.subscribe("location/device1/temperature", (err) => {
-    if (err) {
-      console.log(err);
+  client.subscribe("mytopic");
+});
+client.on("message", (topic, message) => {
+  const data = {
+    device_id: message.device_id,
+    temperature: message.temperature,
+    humidity: message.humidity,
+    timestamp: new Date(),
+  };
+  connection.query("INSERT INTO data SET ?", data, (error, results, fields) => {
+    if (error) {
+      console.error(error);
     } else {
-      console.log("subscribe success!");
+      console.log(results);
     }
   });
-});
-client.on("message", (topic, payload) => {
-  const message = JSON.parse(payload.toString());
-  console.log(`${topic}`, message);
 });
