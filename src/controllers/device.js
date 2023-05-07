@@ -1,6 +1,49 @@
 const express = require("express");
+const MqttHandeler = require("../workers/mqtt/mqttHandler");
+
 module.exports = (connection) => {
   const router = express.Router();
+  const mqttHandler = new MqttHandeler();
+  mqttHandler.subscribe(`device/+/plant/#`);
+  mqttHandler.getMassage (async (data) => {
+   try {
+    await connection
+      .promise()
+      .query(
+        `INSERT INTO device_logs (device_id, temperature, humid, moisture, bright, creatd_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          data.device_id,
+          data.temperature,
+          data.humid,
+          data.moisture,
+          data.bright,
+          data.timestamp,
+        ]
+      );
+    } catch (error) {
+        next(error);
+    }
+  });
+
+  // a0, a1 ~~~ z9까지 랜덤 식별번호 부여
+  const generateDeviceOrder = () => {
+    const shuffleArray = (array) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+    const alphabet = [...Array(26)].map((_, i) =>
+      String.fromCharCode(`a`.charCodeAt(0) + i)
+    );
+    const numbers = [...Array(10).keys()];
+    const orders = shuffleArray(
+      alphabet.flatMap((alp) => numbers.map((num) => alp + num))
+    );
+    const randomIndex = Math.floor(Math.random() * orders.length);
+    return orders[randomIndex];
+  };
 
   /**
    * @swagger
@@ -31,12 +74,17 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-
   router.post("/", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const { user_id } = req.body;
+      const device_order = generateDeviceOrder();
+      const result = await connection.promise().query(
+        `INSERT INTO devices (user_id, device_order) VALUES (?, ?)`,
+      [user_id, device_order]
+    );
+    res.status(200).json({ result });
     } catch (error) {
-      next(err);
+    next(error);
     }
   });
 
@@ -62,13 +110,7 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  router.get("/", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
+  
   /**
    * @swagger
    * /api/:device-id:
@@ -107,7 +149,7 @@ module.exports = (connection) => {
   });
 
   // 디바이스 정보 업데이트
-  router.patch("/update-device", async (req, res, next) => {
+  router.patch("", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
@@ -116,7 +158,7 @@ module.exports = (connection) => {
   });
 
   // 디바이스 삭제
-  router.delete("/delete-device", async (req, res, next) => {
+  router.delete("", async (req, res, next) => {
     try {
       res.json({ data: "ok" });
     } catch (error) {
@@ -124,56 +166,39 @@ module.exports = (connection) => {
     }
   });
 
-  //액츄에이터 제어 - 새로운 신호 생성
-  router.post("/new-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
 
-  //액츄에이터 제어 - 기록 조회
-  router.get("/show-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
-  //액츄에이터 제어 - 기록 삭제
-  router.delete("/show-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
 
-  //새로운 디바이스 수집 로그 생성 (5초 간격)
-  router.post("/create-device-log", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(error);
+  //프론트가 get요청하면 => select * limit 1로 보내줌
+  router.get(`/plant-data/:user-id`, async (req, res) => {
+    try{
+    const user_id = req.params.user-id;
+    const result = await connection.promise().query(
+      `SELECT temperature, humid, moisture, bright, devices.user_id FROM device_logs
+      JOIN devices ON device_logs.device_id = devices.id
+      WHERE devices.user_id = ?
+      ORDER BY created_at DESC
+      LIMIT 1`,
+      [user_id]
+    ); 
+    res.status(200).json({result});
+    } catch(error) {
+      next(error)
     }
-  });
+  })
 
-  //디바이스 로그 조회
-  router.get("/show-device-log", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(error);
-    }
-  });
-  // 특정 디바이스 로그 삭제
-  router.delete("/delete-device-log/:created_at", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(error);
-    }
-  });
-  return router;
+  // 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
+  router.post(`/control`, (req, res) => {
+    const {device_id,temperature, humid, moisture, bright} = req.body;
+    const message = {
+      device_id,
+      temperature,
+      humid,
+      moisture,
+      bright
+    };
+    mqttHandler.publish(`plant/control-data`, message);
+    res.send(`Please set data like this ${message}`)
+  })
+
+   return router;
 };
