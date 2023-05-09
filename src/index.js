@@ -1,11 +1,20 @@
 require("dotenv").config();
 
-const mysql = require("mysql2");
 const express = require("express");
 const cron = require("cron");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
+const knex = require("knex")({
+  client: "mysql2",
+  connection: {
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    database: process.env.MYSQL_DB,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PW,
+  },
+});
 
 
 const options = {
@@ -64,13 +73,7 @@ class App {
   constructor() {
     this.app = express();
     this.port = process.env.PORT || 5000;
-    this.connection = mysql.createConnection({
-      host: process.env.MYSQL_HOST,
-      port: process.env.MYSQL_PORT,
-      database: process.env.MYSQL_DB,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PW,
-    });
+    this.connection = knex;
 
     this.connection.connect((err) => {
       if (err) {
