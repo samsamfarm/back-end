@@ -84,17 +84,15 @@ class CreateUserRequestDTO {
  *               password: 'thisispassword'
  */
 class LoginUserRequestDTO {
-    email;
-    password;
-
+   
     constructor(data)
     {
         if (data.email === undefined || data.password === undefined) {
-                throw new BadRequest("Missing Parameter");
-            }
+            throw new BadRequest("Missing Parameter");
+        }
 
-            this.email = data.email;
-            this.password = data.password;
+        this.email = data.email;
+        this.password = data.password;
     }
 }
 

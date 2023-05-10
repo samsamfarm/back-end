@@ -3,7 +3,7 @@ const UserRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
 
 
-module.exports = class UserService {
+class UserService {
     constructor() {
         this.repository = new UserRepository();
     }
@@ -16,27 +16,49 @@ module.exports = class UserService {
         return this.repository.createUser(user);
     }
 
-    async loginUser(user) {
-        const result = await this.repository.findByEmail(user.email);
-        console.log(result);
-        if(result == undefined) throw new BadRequest("Not Found User");
-        
-        const passwordCheck = bcrypt.compareSync(user.password, result.password);
-        if(!passwordCheck) throw new BadRequest("No Matched Password");
+    async validateUserByEmail(email) {
+        try {
+            const userFlag = await this.repository.findByEmail(email);
+            if (userFlag === null) {
+                throw new BadRequest("Not Found User")
+            };
+        } catch (error) {
+            new Error(error);
+        }
+    }
 
-        return result;
+    async validateUserByPasswordAndEmail(password, email) {
+        try {
+            const userInfo = await this.repository.findByEmail(email);
+            if (userInfo == null) {
+                throw new BadRequest("Not Found User")
+            };
+    
+            const passwordCheck = bcrypt.compareSync(password, userInfo.password);
+            if(!passwordCheck) {
+                throw new BadRequest("No Matched Password");
+            }
+        } catch (error) {
+            new Error(error);
+        }
+    }
+
+     async getLoginInfoByUser(user) {
+        const userInfo = await this.repository.findByEmail(user.email);
+        if (userInfo === null) {
+            throw new Error("Not Found User");
+        }
+
+        return userInfo;
     }
 
     async updateUser(user) {
         const result = await this.repository.updateUser(user);
-        
         if (result == 1) {
             const userData = this.findUserByUserId(user.id);
             return userData;
         }
-        else {
-            throw new InternalServerError("Update Failed");
-        }
+        throw new InternalServerError("Update Failed");
     }
 
     deleteUser(user) {
@@ -44,3 +66,5 @@ module.exports = class UserService {
         return result;
     }
 }
+
+module.exports = UserService;

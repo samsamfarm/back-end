@@ -1,6 +1,11 @@
 const express = require("express");
-module.exports = (connection) => {
-  const router = express.Router();
+const MqttHandler = require("../workers/mqtt/mqttWorker");
+const knex = require("../config/knexClient");
+const router = express.Router();
+const deviceControlDTO = require("../dtos/deviceControlDTO");
+const DeviceService = require('../services/deviceService');
+
+const deviceService = new DeviceService();
 
   /**
    * @swagger
@@ -31,47 +36,23 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-
   router.post("/", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const { user_id } = req.body;
+      const [device_id] = await knex("devices").insert({ user_id });
+
+      res.status(201).json({
+        message: "new device created",
+        device: { device_id, user_id },
+      });
     } catch (error) {
-      next(err);
+      next(error);
     }
   });
 
-  /**
+/**
    * @swagger
-   * /api/device:
-   *   get:
-   *     summary: 전체 디바이스 정보 조회
-   *     tags: [device]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/devices'
-   *     responses:
-   *       200:
-   *         description: 디바이스 생성 완료.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/devices'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  router.get("/", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
-  /**
-   * @swagger
-   * /api/:device-id:
+   * /api/device/:id:
    *   get:
    *     summary: 특정 디바이스 조회
    *     tags: [device]
@@ -98,82 +79,85 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  router.get("/:device-id", async (req, res, next) => {
+  router.get("/:id", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const id = req.params.id;
+      const device = await knex("devices").where("id", "=", id).first();
+      res.status(200).send(device)
     } catch (error) {
       next(err);
     }
   });
 
-  // 디바이스 정보 업데이트
-  router.patch("/update-device", async (req, res, next) => {
+  /**
+   * @swagger
+   * /api/device:
+   *   get:
+   *     summary: 전체 디바이스 목록 조회 
+   *     tags: [device]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/devices'
+   *     responses:
+   *       200:
+   *         description: 디바이스 생성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/devices'
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   */
+  router.get("/", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
-    } catch (error) {
+      const devices = await knex("devices").select("*");
+      res.status(200).send(devices);
+    } catch(err) {
       next(err);
     }
-  });
+  })
 
-  // 디바이스 삭제
-  router.delete("/delete-device", async (req, res, next) => {
+  // NOTE: 디바이스 로그의 데이터 보내주기
+  // TODO: 프론트가 get요청하면 => select * limit 1로 보내줌
+  router.get("/plant-data/:user_id", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
+      const { user_id } = req.params;
 
-  //액츄에이터 제어 - 새로운 신호 생성
-  router.post("/new-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
+      const result = await knex("device_logs")
+        .join("devices", "device_logs.device_id", "=", "devices.id")
+        .select(
+          "device_logs.temperature",
+          "device_logs.humid",
+          "device_logs.moisture",
+          "device_logs.bright",
+          "devices.user_id"
+        )
+        .where("devices.user_id", user_id)
+        .orderBy("device_logs.created_at", "desc")
+        .limit(1);
 
-  //액츄에이터 제어 - 기록 조회
-  router.get("/show-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
-  //액츄에이터 제어 - 기록 삭제
-  router.delete("/show-actuator-control", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
-
-  //새로운 디바이스 수집 로그 생성 (5초 간격)
-  router.post("/create-device-log", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
+      res.status(200).json({ result });
     } catch (error) {
       next(error);
     }
   });
 
-  //디바이스 로그 조회
-  router.get("/show-device-log", async (req, res, next) => {
+  // NOTE: 엑츄에이터 제어 명령
+  // TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
+  router.post(`/control`, async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const {data} = new deviceControlDTO(req.body);
+      
+      await deviceService.sendMQTTByMessage(data);
+      
+      res.json({data: 'success'})
+      
     } catch (error) {
       next(error);
     }
   });
-  // 특정 디바이스 로그 삭제
-  router.delete("/delete-device-log/:created_at", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(error);
-    }
-  });
-  return router;
-};
+
+module.exports = router;

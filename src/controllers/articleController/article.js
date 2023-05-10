@@ -4,7 +4,6 @@ module.exports = (connection) => {
   const router = express.Router();
   /**
    * @swagger
-   
    * /api/article:
    *   post:
    *     summary: 새로운 게시물 작성
@@ -41,7 +40,6 @@ module.exports = (connection) => {
   });
   /**
    * @swagger
-   
    * /api/article:
    *   get:
    *     summary: 전체 게시물을 불러오는 api 입니다
@@ -163,6 +161,8 @@ module.exports = (connection) => {
   router.delete("/:article-id", (req, res) => {
     res.json({ date: "ok" });
   });
+
   router.use("/comment", require("./comment")(this.connection));
+  
   return router;
 };

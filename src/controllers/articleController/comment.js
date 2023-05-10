@@ -1,8 +1,7 @@
 const express = require("express");
-
 module.exports = (connection) => {
   const router = express.Router();
-  // 댓글 생성
+
   /**
    * @swagger
    * /api/article/comment:
@@ -33,7 +32,6 @@ module.exports = (connection) => {
     }
   });
 
-  // 댓글 수정
   /**
    * @swagger
    * /api/article/comment/:comment-id:
@@ -70,7 +68,7 @@ module.exports = (connection) => {
       next(error);
     }
   });
-  // 댓글 삭제
+ 
   /**
    * @swagger
    * /api/article/comment/:comment-id:
