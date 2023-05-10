@@ -1,6 +1,6 @@
 const mqtt = require("mqtt");
 
-class MqttHandeler {
+class MqttHandler {
   constructor() {
     this.client = mqtt.connect("http://34.64.51.215/mqtt/api");
   }
@@ -35,5 +35,5 @@ class MqttHandeler {
   }
 }
 
-module.exports = MqttHandeler;
+module.exports = MqttHandler;
 

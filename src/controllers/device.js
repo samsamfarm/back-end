@@ -1,49 +1,33 @@
 const express = require("express");
-const MqttHandeler = require("../workers/mqtt/mqttHandler");
+const MqttHandler = require("../workers/mqtt/mqttHandler");
 
 module.exports = (connection) => {
   const router = express.Router();
-  const mqttHandler = new MqttHandeler();
+
+  const mqttHandler = new MqttHandler();
+
   mqttHandler.subscribe(`device/+/plant/#`);
   mqttHandler.getMassage (async (data) => {
    try {
-    await connection
-      .promise()
-      .query(
-        `INSERT INTO device_logs (device_id, temperature, humid, moisture, bright, creatd_at) VALUES (?, ?, ?, ?, ?, ?)`,
-        [
-          data.device_id,
-          data.temperature,
-          data.humid,
-          data.moisture,
-          data.bright,
-          data.timestamp,
-        ]
-      );
+    await connection.promise().query(
+      `INSERT INTO device_logs (
+            device_id, temperature, humid, 
+            moisture, bright, creatd_at
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?)`,
+      [
+        data.device_id,
+        data.temperature,
+        data.humid,
+        data.moisture,
+        data.bright,
+        data.timestamp,
+      ]
+    );
     } catch (error) {
         next(error);
     }
   });
-
-  // a0, a1 ~~~ z9까지 랜덤 식별번호 부여
-  const generateDeviceOrder = () => {
-    const shuffleArray = (array) => {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    };
-    const alphabet = [...Array(26)].map((_, i) =>
-      String.fromCharCode(`a`.charCodeAt(0) + i)
-    );
-    const numbers = [...Array(10).keys()];
-    const orders = shuffleArray(
-      alphabet.flatMap((alp) => numbers.map((num) => alp + num))
-    );
-    const randomIndex = Math.floor(Math.random() * orders.length);
-    return orders[randomIndex];
-  };
 
   /**
    * @swagger
@@ -167,18 +151,21 @@ module.exports = (connection) => {
   });
 
 
-
   //프론트가 get요청하면 => select * limit 1로 보내줌
   router.get(`/plant-data/:user-id`, async (req, res) => {
     try{
     const user_id = req.params.user-id;
     const result = await connection.promise().query(
-      `SELECT temperature, humid, moisture, bright, devices.user_id FROM device_logs
-      JOIN devices ON device_logs.device_id = devices.id
-      WHERE devices.user_id = ?
-      ORDER BY created_at DESC
-      LIMIT 1`,
-      [user_id]
+      `SELECT temperature, humid, moisture, bright, devices.user_id
+       FROM
+        device_logs
+      JOIN
+       devices ON device_logs.device_id = devices.id
+      WHERE 
+        devices.user_id = ?
+      ORDER BY
+       created_at DESC
+      LIMIT 1`, [user_id]
     ); 
     res.status(200).json({result});
     } catch(error) {

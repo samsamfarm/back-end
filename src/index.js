@@ -3,78 +3,17 @@ require('dotenv').config();
 const express = require("express");
 const cron = require("cron");
 const swaggerUi = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
 
-const knex = require("knex")({
-  client: "mysql2",
-  connection: {
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    database: process.env.MYSQL_DB,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PW,
-  },
-});
+const cors = require("cors");
 
-
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Samsamfarm API with Swagger',
-      version: '1.0.0',
-      description: 'Samsamfarm API with Swagger'
-    },
-    servers: [
-      {
-        url: 'http://localhost:5000',
-        description: 'Samsamfam server'
-      }
-    ],
-    tags: [
-      {
-        name: 'article',
-        description: 'About Article, Comment'
-      },
-      {
-        name: 'auth',
-        description: 'About User Register/Login'
-      },
-      {
-        name: 'device',
-        description: 'About Actuator, Device'
-      },
-      {
-        name: 'plant',
-        description: 'About Plant, Guest_book,Plant log'
-      },
-      {
-        name: 'user',
-        description: 'About User Info'
-      }
-    ]
-  },
-  apis: ['./src/controllers/*.js', './src/services/*.js', './src/errors/*.js', './src/controllers/articleController/*.js', './src/controllers/plantController/*.js']
-};
-
-const specs = swaggerJsdoc(options);
+const specs = require("./config/swaggerConfig");
 
 const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
 
 class App {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || 5000;
-    this.connection = knex;
-
-    this.connection.connect((err) => {
-      if (err) {
-        console.error('Error connectiong to database', err);
-      } else {
-        console.log('Connectd to Database!');
-      }
-    });
-
+    this.port = 5000;
     this.registerMiddleware();
     this.registerRoutes();
     this.registerErrorHandlers();
@@ -86,7 +25,7 @@ class App {
     // Middlewares 등록
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
-    this.app.use(cors());
+    this.app.use(cors({ origin: "http://localhost:5000" }));
   }
 
   registerRoutes() {
@@ -95,11 +34,11 @@ class App {
     // this.app.use("/posts", postsRouter);
 
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use('/api/article', require('./controllers/articleController/article')(this.connection));
-    this.app.use('/api/auth', require('./controllers/auth')(this.connection));
-    this.app.use('/api/device', require('./controllers/device')(this.connection));
-    this.app.use('/api/plant', require('./controllers/plantController/plant')(this.connection));
-    this.app.use('/api/user', require('./controllers/user')());
+    this.app.use("/api/article",require("./controllers/articleController/article"));
+    this.app.use("/api/auth", require("./controllers/auth"));
+    this.app.use("/api/device", require("./controllers/device"));
+    this.app.use("/api/plant", require("./controllers/plantController/plant"));
+    this.app.use("/api/user", require("./controllers/user"));
   }
 
   registerErrorHandlers() {

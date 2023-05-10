@@ -1,12 +1,8 @@
-// 회원가입 및 로그인 (/auth)
-// TODO: sign-in / sign-out
-// MBTI 추가 / 수정
-
 const express = require('express');
 const UserService = require('../services/userService');
 const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO } = require('../dtos/userDto');
 
-module.exports = (connection) => {
+
   const router = express.Router();
   const userService = new UserService();
 
@@ -68,7 +64,15 @@ module.exports = (connection) => {
     try {
       const user = new LoginUserRequestDTO(req.body);
 
-      const result = new LoginUserResponseDTO(await userService.loginUser(user));
+      await userService.validateUserByEmail(user.email);
+      await userService.validateUserByPasswordAndEmail(
+        user.email,
+        user.password
+      );
+
+      const loginUser = await userService.getLoginInfoByUser(user);
+
+      const result = new LoginUserResponseDTO(loginUser);
 
       res.json(result);
     } catch (error) {
@@ -76,5 +80,6 @@ module.exports = (connection) => {
     }
   });
 
-  return router;
-};
+  module.exports = router;
+
+

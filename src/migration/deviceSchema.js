@@ -1,3 +1,5 @@
+const knex = require("knex");
+
 /**
  * @swagger
  * components:
@@ -10,9 +12,6 @@
  *         id:
  *           type: number
  *           description: 디바이스 고유id 입니다.
- *         device_order:
- *           type: string
- *           description: 디바이스의 식별 번호 입니다.
  *         user_id:
  *           type: number
  *           description: 해당 디바이스가 배정되어 있는 유저의 고유id 입니다.
@@ -36,6 +35,18 @@
  *         updated_at: 2023-05-04 20:24:43
  *         deleted_at:  2023-05-05 20:24:43
  */
+const deviceSchema = knex.schema.hasTable("devices").then((exists) => {
+  if (!exists) {
+    return knex.schema.createTable("devices", (table) => {
+      table.increments("id").primary();
+      table.integer("user_id").unsigned();
+      table.timestamp("created_at").defaultTo(knex.fn.now());
+      table.datetime("updated_at");
+      table.datetime("deleted_at");
+      table.foreign("user_id").references("users.id");
+    });
+  }
+});
 
 /**
  * @swagger
@@ -78,6 +89,19 @@
  *         bright: 1200
  *         created_at:  2023-05-05 20:24:43
  */
+const deviceLogSchema = knex.schema.hasTable("device_logs").then((exits) => {
+  if (!exits) {
+    return knex.schema.createTable("device_logs", (table) => {
+      table.integer("device_id").unsigned();
+      table.decimal("temperature", 3, 1);
+      table.decimal("humid", 3, 1);
+      table.bigInteger("bright");
+      table.decimal("moisture", 3, 1);
+      table.timestamp("created_at").defaultTo(knex.fn.now());
+      table.foreign("device_id").references("devices.id");
+    });
+  }
+});
 
 /**
  * @swagger
@@ -117,3 +141,22 @@
  *         finished_time: 2023-05-03 20:26:43
  *         deleted_at:  2023-05-05 20:24:43
  */
+const actuatorSchema = knex.schema.hasTable("actuators").then((exits) => {
+  if (!exits) {
+    return knex.schema.createTable("actuators", (table) => {
+      table.increments("id").primary();
+      table.integer("device_id").unsigned();
+      table.boolean("is_success");
+      table.dateTime("created_at").defaultTo(knex.fn.now());
+      table.dateTime("finished_time");
+      table.dateTime("deleted_at");
+      table.foreign("device_id").references("devices.id");
+    });
+  }
+});
+
+module.exports = {
+  deviceSchema,
+  deviceLogSchema,
+  actuatorSchema,
+};
