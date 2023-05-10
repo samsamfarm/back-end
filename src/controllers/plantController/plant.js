@@ -1,15 +1,9 @@
 const express = require("express");
 const knex = require("../../config/knexClient");
 
-const PlantService = require("../../services/plantService");
-const {
-  CreatePlantRequestDTO,
-  PlantDTO,
-} = require("../plantController/../../dtos/plantDto");
+const { CreatePlantRequestDTO } = require("../plantController/../../dtos/plantDto");
 
-
-  const router = express.Router();
-  const plantService = new PlantService();
+const router = express.Router();
 
   /**
    * @swagger
@@ -45,7 +39,6 @@ router.post("/", (req, res, next) => {
     const { user_id, device_id, plant_type } = new CreatePlantRequestDTO(
       req.body
     );
-
     knex("plants")
       .insert({
         user_id,
@@ -68,50 +61,9 @@ router.post("/", (req, res, next) => {
   }
 });
 
-
-  /**
+   /**
    * @swagger
    * /api/plant/:user_id:
-   *   get:
-   *     summary: 모든 유저의 작물 성장 단계 조회
-   *     tags: [plant]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/plant_grade_with_user'
-   *     responses:
-   *       200:
-   *         description: Success.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/plant_grade_with_user'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  router.get("/:user-id", async (req, res, next) => {
-    try {
-      const userId = req.params.user_id;
-      const userPlants = await knex("plants").where("user_id", userId);
-    }
-    catch (err) {
-      if (err instanceof BadRequest) {
-        res.status(400).json(userPlants);
-      } else {
-        next(err);
-      }
-    }
-     
-  });
-
-
-  
-
-  /**
-   * @swagger
-   * /api/plant/grade/:user-id:
    *   get:
    *     summary: 특정 유저의 작물 성장 단계 조회
    *     tags: [plant]
@@ -138,15 +90,55 @@ router.post("/", (req, res, next) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  router.get("/:user-id", async (req, res, next) => {
-   try {
-     const plant = new PlantDTO(
-       await plantService.findUserByPlantId(req.params.id)
-     );
-     res.json({ plant });
-   } catch (error) {
-     next(error);
-   }
+router.get("/:user_id", async (req, res, next) => {
+    try {
+      const userId = req.params.user_id;
+      const userPlants = await knex("plants").where("user_id", userId);
+      res.status(200).json(userPlants);
+    } catch (err) {
+      if (err instanceof BadRequest) {
+      } else {
+        next(err);
+      }
+    }
   });
 
+ 
+
+  /**
+   * @swagger
+   * /api/plant/:
+   *   get:
+   *     summary: 전체 유저의 작물 성장 단계 조회
+   *     tags: [plant]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/plant_grade_with_user'
+   *     responses:
+   *       200:
+   *         description: Success.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/plant_grade_with_user'
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   */
+router.get("/", async (req, res, next) => {
+   try {
+    const userPlants = await knex
+      .select("*")
+      .from("plants");
+      res.status(200).json(userPlants);
+   } catch (err) {
+     if (err instanceof BadRequest) {
+     } else {
+       next(err);
+     }
+   }
+  });
+  
 module.exports = router;
