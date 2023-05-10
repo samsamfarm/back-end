@@ -67,7 +67,7 @@ mqttHandler.getMassage (async (data) => {
 
 /**
    * @swagger
-   * /api/:device-id:
+   * /api/device/:id:
    *   get:
    *     summary: 특정 디바이스 조회
    *     tags: [device]
@@ -94,9 +94,11 @@ mqttHandler.getMassage (async (data) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  router.get("/:device-id", async (req, res, next) => {
+  router.get("/:id", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const id = req.params.id;
+      const device = await knex("devices").where("id", "=", id).first();
+      res.status(200).send(device)
     } catch (error) {
       next(err);
     }
@@ -124,7 +126,14 @@ mqttHandler.getMassage (async (data) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  
+  router.get("/", async (req, res, next) => {
+    try {
+      const devices = await knex("devices").select("*");
+      res.status(200).send(devices);
+    } catch(err) {
+      next(err);
+    }
+  })
   
 
   
