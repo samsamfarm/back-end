@@ -103,8 +103,6 @@ router.get("/:user_id", async (req, res, next) => {
     }
   });
 
- 
-
   /**
    * @swagger
    * /api/plant/:
@@ -141,4 +139,5 @@ router.get("/", async (req, res, next) => {
    }
   });
   
+
 module.exports = router;

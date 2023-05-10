@@ -1,18 +1,26 @@
+require("dotenv").config();
+
 const mqtt = require("mqtt");
+
+const options = {
+  host: process.env.MQTT_HOST,
+  port: process.env.MQTT_PORT,
+  protocol: "mqtt",
+};
 
 class MqttHandler {
   constructor() {
-    this.client = mqtt.connect("http://34.64.51.215/mqtt/api");
+    this.client = mqtt.connect(options);
   }
 
   subscribe(topic) {
     this.client.on("connect", () => {
       this.client.subscribe(topic, (error) => {
-        if(!error) {
-          console.log(`Mqtt subscribed to ${topic}`)
+        if (!error) {
+          console.log(`Mqtt subscribed to ${topic}`);
         }
-      })
-    })
+      });
+    });
   }
 
   getMassage(callback) {
@@ -24,9 +32,9 @@ class MqttHandler {
         moisture: message.humidity,
         bright: message.bright,
         creatd_at: new Date(),
-      }
+      };
       callback(data);
-    })
+    });
   }
 
   publish(topic, message) {
@@ -36,4 +44,3 @@ class MqttHandler {
 }
 
 module.exports = MqttHandler;
-

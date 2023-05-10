@@ -1,32 +1,25 @@
 const express = require("express");
 const MqttHandler = require("../workers/mqtt/mqttHandler");
+const knex = require("../config/knexClient");
 
-module.exports = (connection) => {
-  const router = express.Router();
+const router = express.Router();
 
-  const mqttHandler = new MqttHandler();
+const mqttHandler = new MqttHandler();
 
-  mqttHandler.subscribe(`device/+/plant/#`);
-  mqttHandler.getMassage (async (data) => {
-   try {
-    await connection.promise().query(
-      `INSERT INTO device_logs (
-            device_id, temperature, humid, 
-            moisture, bright, creatd_at
-        ) VALUES (
-          ?, ?, ?, ?, ?, ?)`,
-      [
-        data.device_id,
-        data.temperature,
-        data.humid,
-        data.moisture,
-        data.bright,
-        data.timestamp,
-      ]
-    );
-    } catch (error) {
-        next(error);
-    }
+mqttHandler.subscribe(`device/+/plant/#`);
+mqttHandler.getMassage (async (data) => {
+ try {
+   await knex("device_logs").insert({
+     device_id: data.device_id,
+     temperature: data.temperature,
+     humid: data.humid,
+     moisture: data.moisture,
+     bright: data.bright,
+     created_at: data.timestamp,
+   });
+ } catch (error) {
+   next(error);
+ }
   });
 
   /**
@@ -61,41 +54,18 @@ module.exports = (connection) => {
   router.post("/", async (req, res, next) => {
     try {
       const { user_id } = req.body;
-      const device_order = generateDeviceOrder();
-      const result = await connection.promise().query(
-        `INSERT INTO devices (user_id, device_order) VALUES (?, ?)`,
-      [user_id, device_order]
-    );
-    res.status(200).json({ result });
+      const [device_id] = await knex("devices").insert({ user_id });
+
+      res.status(201).json({
+        message: "new device created",
+        device: { device_id, user_id },
+      });
     } catch (error) {
-    next(error);
+      next(error);
     }
   });
 
-  /**
-   * @swagger
-   * /api/device:
-   *   get:
-   *     summary: 전체 디바이스 정보 조회
-   *     tags: [device]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/devices'
-   *     responses:
-   *       200:
-   *         description: 디바이스 생성 완료.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/devices'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  
-  /**
+/**
    * @swagger
    * /api/:device-id:
    *   get:
@@ -132,25 +102,34 @@ module.exports = (connection) => {
     }
   });
 
-  // 디바이스 정보 업데이트
-  router.patch("", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
+  /**
+   * @swagger
+   * /api/device:
+   *   get:
+   *     summary: 전체 디바이스 목록 조회 (생성일 순서)
+   *     tags: [device]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/devices'
+   *     responses:
+   *       200:
+   *         description: 디바이스 생성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/devices'
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   */
+  
+  
 
-  // 디바이스 삭제
-  router.delete("", async (req, res, next) => {
-    try {
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(err);
-    }
-  });
+  
 
-
+  //디바이스 로그의 데이터 보내주기
   //프론트가 get요청하면 => select * limit 1로 보내줌
   router.get(`/plant-data/:user-id`, async (req, res) => {
     try{
@@ -173,6 +152,7 @@ module.exports = (connection) => {
     }
   })
 
+  //엑츄에이터 제어 명령
   // 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
   router.post(`/control`, (req, res) => {
     const {device_id,temperature, humid, moisture, bright} = req.body;
@@ -185,7 +165,6 @@ module.exports = (connection) => {
     };
     mqttHandler.publish(`plant/control-data`, message);
     res.send(`Please set data like this ${message}`)
-  })
+  });
 
-   return router;
-};
+module.exports = router;
