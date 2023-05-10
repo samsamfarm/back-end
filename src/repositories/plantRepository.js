@@ -11,7 +11,6 @@ class PlantRepository {
     return result;
   }
 
-
   async create(plant) {
     const userId = await this.db(this.table)
       .insert(plant)
@@ -28,6 +27,7 @@ class PlantRepository {
       return result;
   }
   
+  // TODO: getplant 만들어야함
   async getPlant() {
     // 
   }

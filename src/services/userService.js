@@ -43,8 +43,8 @@ class UserService {
         }
     }
 
-    getLoginInfoByUser(user) {
-        const userInfo = this.repository.findByEmail(user.email);
+     async getLoginInfoByUser(user) {
+        const userInfo = await this.repository.findByEmail(user.email);
         if (userInfo === null) {
             throw new Error("Not Found User");
         }
@@ -54,14 +54,11 @@ class UserService {
 
     async updateUser(user) {
         const result = await this.repository.updateUser(user);
-        
         if (result == 1) {
             const userData = this.findUserByUserId(user.id);
             return userData;
         }
-        else {
-            throw new InternalServerError("Update Failed");
-        }
+        throw new InternalServerError("Update Failed");
     }
 
     deleteUser(user) {

@@ -1,5 +1,5 @@
 const express = require("express");
-const MqttHandler = require("../workers/mqtt/mqttHandler");
+const MqttHandler = require("../workers/mqtt/mqttWorker");
 const knex = require("../config/knexClient");
 
 const router = express.Router();
@@ -175,5 +175,7 @@ mqttHandler.getMassage (async (data) => {
     mqttHandler.publish(`plant/control-data`, message);
     res.send(`Please set data like this ${message}`)
   });
+
+//엑츄에이터 제어로그 찍고
 
 module.exports = router;
