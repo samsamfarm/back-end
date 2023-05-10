@@ -9,7 +9,7 @@ const cors = require("cors");
 const specs = require("./config/swaggerConfig");
 
 const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
-const MqttHandler = require("../workers/mqtt/mqttWorker");
+const MqttHandler = require("./workers/mqtt/mqttWorker");
 
 class App {
   constructor() {

@@ -7,9 +7,8 @@ class DeviceService {
     this.actuatorRepository = new ActuatorRepository();
   }
 
-  sendMQTTByMessage(message) {
-    const {device_id} = message;
-    this.actuatorRepository.saveActuatorFromMessage()
+  async sendMQTTByMessage(message) {
+    await this.actuatorRepository.saveActuatorFromMessage(message)
   }
 }
 

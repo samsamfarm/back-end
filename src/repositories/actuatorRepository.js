@@ -1,7 +1,9 @@
 const { BadRequest } = require("../errors");
+const { Repository } = require("./index");
 
-class ActuatorRepository {
+class ActuatorRepository extends Repository {
   constructor() {
+    super();
     this.table = "actuators";
   }
 
@@ -11,9 +13,14 @@ class ActuatorRepository {
     return result;
   }
 
-  saveActuatorFromMessage(message) {
+  async saveActuatorFromMessage(message) {
     try {
-      return this.db(this.table).insert({message});
+      const [result, row] = await this.db(this.table).insert(message);
+      if (row === 1) {
+        return result;
+      }
+      // FIXME: row 가 == 이라면 에러입니다. 
+      return result;
     } catch (err) {
       console.log(String(err));
       if (err.errno == 1062) {

@@ -1,7 +1,3 @@
-const knex = require("../config/knexClient");
-
-
-
 // Reference : https://knexjs.org/guide/schema-builder.html
 
 /**
@@ -64,22 +60,24 @@ const knex = require("../config/knexClient");
  *         updated_at: 2023-05-04 20:24:43
  *         deleted_at:  2023-05-05 20:24:43
  */
-const userSchema = knex.schema.hasTable("users").then((exists) => {
-  if (!exists) {
+exports.up = function(knex) {
     return knex.schema.createTable("users", (table) => {
-      table.increments("id").primary();
-      table.string("email", 20).notNullable();
-      table.string("name", 20).notNullable();
-      table.string("nickname", 20).notNullable();
-      table.string("password", 60).notNullable(); // 60 is bcrypt encoded password length
-      table.string("mbti", 4).notNullable();
-      table.string("phone", 15).notNullable();
-      table.datetime("created_at");
-      table.datetime("updated_at");
-      table.datetime("deleted_at");
-      table.unique("email");
+        table.increments("id").primary();
+        table.string("email", 20).notNullable();
+        table.string("name", 20).notNullable();
+        table.string("nickname", 20).notNullable();
+        table.string("password", 60).notNullable(); // 60 is bcrypt encoded password length
+        table.string("mbti", 4).notNullable();
+        table.string("phone", 15).notNullable();
+        table.datetime("created_at");
+        table.datetime("updated_at");
+        table.datetime("deleted_at");
+        table.unique("email");
     });
-  }
-});
+};
 
-module.exports = userSchema;
+exports.down = function(knex) {
+    return knex.schema.dropTable("users")
+};
+  
+exports.config = { transaction: false }

@@ -2,7 +2,7 @@ const express = require("express");
 const MqttHandler = require("../workers/mqtt/mqttWorker");
 const knex = require("../config/knexClient");
 const router = express.Router();
-const deviceLogDTO = require("../dtos/deviceLogDto");
+const deviceControlDTO = require("../dtos/deviceControlDTO");
 const DeviceService = require('../services/deviceService');
 
 const deviceService = new DeviceService();
@@ -93,7 +93,7 @@ const deviceService = new DeviceService();
    * @swagger
    * /api/device:
    *   get:
-   *     summary: 전체 디바이스 목록 조회 (생성일 순서)
+   *     summary: 전체 디바이스 목록 조회 
    *     tags: [device]
    *     requestBody:
    *       required: true
@@ -122,36 +122,42 @@ const deviceService = new DeviceService();
 
   // NOTE: 디바이스 로그의 데이터 보내주기
   // TODO: 프론트가 get요청하면 => select * limit 1로 보내줌
-  router.get(`/plant-data/:user-id`, async (req, res) => {
-    try{
-    const user_id = req.params.user-id;
-    const result = await connection.promise().query(
-      `SELECT temperature, humid, moisture, bright, devices.user_id
-       FROM
-        device_logs
-      JOIN
-       devices ON device_logs.device_id = devices.id
-      WHERE 
-        devices.user_id = ?
-      ORDER BY
-       created_at DESC
-      LIMIT 1`, [user_id]
-    ); 
-    res.status(200).json({result});
-    } catch(error) {
-      next(error)
+  router.get("/plant-data/:user_id", async (req, res, next) => {
+    try {
+      const { user_id } = req.params;
+
+      const result = await knex("device_logs")
+        .join("devices", "device_logs.device_id", "=", "devices.id")
+        .select(
+          "device_logs.temperature",
+          "device_logs.humid",
+          "device_logs.moisture",
+          "device_logs.bright",
+          "devices.user_id"
+        )
+        .where("devices.user_id", user_id)
+        .orderBy("device_logs.created_at", "desc")
+        .limit(1);
+
+      res.status(200).json({ result });
+    } catch (error) {
+      next(error);
     }
-  })
+  });
 
   // NOTE: 엑츄에이터 제어 명령
   // TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
-  router.post(`/control`, (req, res) => {
-    const {message} = new deviceLogDTO(req.body);
-
-    deviceService.sendMQTTByMessage(message);
-    
-    // mqttHandler.publish(`plant/control-data`, message);
-    res.send(`Please set data like this ${message}`)
+  router.post(`/control`, async (req, res, next) => {
+    try {
+      const {data} = new deviceControlDTO(req.body);
+      
+      await deviceService.sendMQTTByMessage(data);
+      
+      res.json({data: 'success'})
+      
+    } catch (error) {
+      next(error);
+    }
   });
 
 module.exports = router;
