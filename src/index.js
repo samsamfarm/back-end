@@ -9,10 +9,12 @@ const cors = require("cors");
 const specs = require("./config/swaggerConfig");
 
 const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
+const MqttHandler = require("../workers/mqtt/mqttWorker");
 
 class App {
   constructor() {
     this.app = express();
+    this.mqttHandler = new MqttHandler();
     this.port = 5000;
     this.registerMiddleware();
     this.registerRoutes();
@@ -75,6 +77,8 @@ class App {
   }
 
   scheduleJobs() {
+    this.mqttHandler.subscribeByDevicePlant()
+
     // cron 스케줄 등록
     const job = new cron.CronJob('*/1 * * * *', () => {
       console.log(`The time is now ${new Date()}`);

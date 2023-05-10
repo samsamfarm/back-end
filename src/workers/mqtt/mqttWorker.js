@@ -41,6 +41,25 @@ class MqttHandler {
     this.client.publish(topic, JSON.stringify(message));
     console.log(`Published ${JSON.stringify(message)} to ${topic}`);
   }
+
+  
+  subscribeByDevicePlant() {
+    this.subscribe(`device/+/plant/#`);
+    this.getMassage (async (data) => {
+      try {
+        await knex("device_logs").insert({
+          device_id: data.device_id,
+          temperature: data.temperature,
+          humid: data.humid,
+          moisture: data.moisture,
+          bright: data.bright,
+          created_at: data.timestamp,
+        });
+      } catch (error) {
+        next(error);
+      }
+    });
+  }
 }
 
 module.exports = MqttHandler;

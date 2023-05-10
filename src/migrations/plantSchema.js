@@ -1,3 +1,7 @@
+
+plants
+plant_grade_logs
+guest_books
 const knex = require("knex");
 
 /**
@@ -139,7 +143,7 @@ const plantGradeLogSchema = knex.schema
  */
 const guestBookSchema = knex.schema.hasTable("guest_books").then((exits) => {
   if (!exits) {
-    return knex.creatTable("guest_books", (table) => {
+    return knex.createTable("guest_books", (table) => {
       table.increments("id").primary();
       table.integer("user_id").unsigned();
       table.integer("plant_id").unsigned();

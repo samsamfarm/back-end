@@ -1,26 +1,11 @@
 const express = require("express");
 const MqttHandler = require("../workers/mqtt/mqttWorker");
 const knex = require("../config/knexClient");
-
 const router = express.Router();
+const deviceLogDTO = require("../dtos/deviceLogDto");
+const DeviceService = require('../services/deviceService');
 
-const mqttHandler = new MqttHandler();
-
-mqttHandler.subscribe(`device/+/plant/#`);
-mqttHandler.getMassage (async (data) => {
- try {
-   await knex("device_logs").insert({
-     device_id: data.device_id,
-     temperature: data.temperature,
-     humid: data.humid,
-     moisture: data.moisture,
-     bright: data.bright,
-     created_at: data.timestamp,
-   });
- } catch (error) {
-   next(error);
- }
-  });
+const deviceService = new DeviceService();
 
   /**
    * @swagger
@@ -134,12 +119,9 @@ mqttHandler.getMassage (async (data) => {
       next(err);
     }
   })
-  
 
-  
-
-  //디바이스 로그의 데이터 보내주기
-  //프론트가 get요청하면 => select * limit 1로 보내줌
+  // NOTE: 디바이스 로그의 데이터 보내주기
+  // TODO: 프론트가 get요청하면 => select * limit 1로 보내줌
   router.get(`/plant-data/:user-id`, async (req, res) => {
     try{
     const user_id = req.params.user-id;
@@ -161,21 +143,15 @@ mqttHandler.getMassage (async (data) => {
     }
   })
 
-  //엑츄에이터 제어 명령
-  // 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
+  // NOTE: 엑츄에이터 제어 명령
+  // TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
   router.post(`/control`, (req, res) => {
-    const {device_id,temperature, humid, moisture, bright} = req.body;
-    const message = {
-      device_id,
-      temperature,
-      humid,
-      moisture,
-      bright
-    };
-    mqttHandler.publish(`plant/control-data`, message);
+    const {message} = new deviceLogDTO(req.body);
+
+    deviceService.sendMQTTByMessage(message);
+    
+    // mqttHandler.publish(`plant/control-data`, message);
     res.send(`Please set data like this ${message}`)
   });
-
-//엑츄에이터 제어로그 찍고
 
 module.exports = router;
