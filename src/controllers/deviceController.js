@@ -141,7 +141,7 @@ const deviceService = new DeviceService();
         .orderBy("device_logs.created_at", "desc")
         .limit(1);
 
-      res.json({ dataa: result });
+      res.json({ data: result });
     } catch (error) {
       next(error);
     }
