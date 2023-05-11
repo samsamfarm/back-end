@@ -4,7 +4,7 @@ module.exports = (connection) => {
   const router = express.Router();
   /**
    * @swagger
-   * /api/plant/guest-book:
+   * /api/v1/plant/guest-book:
    *   post:
    *     summary: 새로운 방명록 작성
    *     tags: [plant]
@@ -47,7 +47,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/plant/guest-book:
+   * /api/v1/plant/guest-book:
    *   get:
    *     summary: 방명록 불러오기
    *     tags: [plant]
@@ -77,7 +77,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/plant/guest-book:
+   * /api/v1/plant/guest-book:
    *   patch:
    *     summary: 방명록 수정
    *     tags: [plant]
@@ -120,7 +120,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/plant/guest-book:
+   * /api/v1/plant/guest-book:
    *   delete:
    *     summary: 방명록 불러오기
    *     tags: [plant]

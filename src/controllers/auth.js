@@ -8,7 +8,7 @@ const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO
 
   /**
    * @swagger
-   * /api/auth/sign-up:
+   * /api/v1/auth/sign-up:
    *   post:
    *     summary: 유저 회원가입
    *     tags: [auth]
@@ -41,7 +41,7 @@ const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO
   /**
    * @swagger
    
-   * /api/auth/sign-in:
+   * /api/v1/auth/sign-in:
    *   post:
    *     summary: 유저 로그인
    *     tags: [auth]

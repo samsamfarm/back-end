@@ -11,7 +11,7 @@ module.exports = () => {
 
   /**
    * @swagger
-   * /api/user/{id}:
+   * /api/v1/user/{id}:
    *   get:
    *     summary: 유저 정보를 ID 기반으로 반환
    *     tags: [user]
@@ -46,7 +46,7 @@ module.exports = () => {
 
   /**
    * @swagger
-   * /api/user/{id}:
+   * /api/v1/user/{id}:
    *   put:
    *     summary: 유저 정보를 ID 기반으로 수정
    *     tags: [user]
@@ -81,7 +81,7 @@ module.exports = () => {
   
   /**
    * @swagger
-   * /api/user/{id}:
+   * /api/v1/user/{id}:
    *   delete:
    *     summary: 유저 정보를 ID 기반으로 반환
    *     tags: [user]

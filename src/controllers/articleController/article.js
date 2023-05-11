@@ -4,7 +4,7 @@ module.exports = (connection) => {
   const router = express.Router();
   /**
    * @swagger
-   * /api/article:
+   * /api/v1/article:
    *   post:
    *     summary: 새로운 게시물 작성
    *     tags: [article]
@@ -40,7 +40,7 @@ module.exports = (connection) => {
   });
   /**
    * @swagger
-   * /api/article:
+   * /api/v1/article:
    *   get:
    *     summary: 전체 게시물을 불러오는 api 입니다
    *     tags: [article]
@@ -66,7 +66,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/article/:article-id:
+   * /api/v1/article/:article-id:
    *   get:
    *     summary: 해당 게시물 id의 게시물과 댓글 불러오기
    *     tags: [article]
@@ -98,7 +98,7 @@ module.exports = (connection) => {
   });
   /**
    * @swagger
-   * /api/article/:article-id:
+   * /api/v1/article/:article-id:
    *   patch:
    *     summary: 특정 게시물 수정
    *     tags: [article]
@@ -131,7 +131,7 @@ module.exports = (connection) => {
   // 게시물 삭제
   /**
    * @swagger
-   * /api/article/:article-id:
+   * /api/v1/article/:article-id:
    *   delete:
    *     summary: 특정 게시물 삭제
    *     tags: [article]

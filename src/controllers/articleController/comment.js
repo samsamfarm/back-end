@@ -4,7 +4,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/article/comment:
+   * /api/v1/article/comment:
    *   post:
    *     summary: 새로운 댓글 작성
    *     tags: [article]
@@ -34,7 +34,7 @@ module.exports = (connection) => {
 
   /**
    * @swagger
-   * /api/article/comment/:comment-id:
+   * /api/v1/article/comment/:comment-id:
    *   patch:
    *     summary: 특정 댓글 수정
    *     tags: [article]
@@ -71,7 +71,7 @@ module.exports = (connection) => {
  
   /**
    * @swagger
-   * /api/article/comment/:comment-id:
+   * /api/v1/article/comment/:comment-id:
    *   delete:
    *     summary: 특정 댓글 수정
    *     tags: [article]
