@@ -17,23 +17,40 @@ class DeviceService {
     if (!deviceId) {
       throw new BadRequest({device_id: 'invalid'});
     }
+  }
 
-    // TODO: deviceRepository.getDeviceById 작성 해야함
+  async vaildateAlreadyExistsByDeviceId(deviceId) {
     const device = await this.deviceRepository.getDeviceById(deviceId);
     if (device) {
       throw new BadRequest({device_id: "already_exists"});
     }
   }
 
+  async vaildateNotFoundByDeviceId(deviceId) {
+    const device = await this.deviceRepository.getDeviceById(deviceId);
+    if (device == null) {
+      throw new BadRequest({device_id: "not_found"});
+    }
+  }
+
   async createDevice(deviceId, userId) {
     await this.validateDeviceId(deviceId);
+    await this.vaildateAlreadyExistsByDeviceId(deviceId);
 
     const createDeviceInfo = await this.deviceRepository.createDevice(deviceId, userId);
-    if (createDeviceInfo == null) {
-      throw new InternalServerError({device: "create_failed"});
+    if (createDeviceInfo.length === 1) {
+      return createDeviceInfo;
     }
+    
+    throw new InternalServerError({device: "create_failed"});
+  }
 
-    return createDeviceInfo;
+  getDevices() {
+    return this.deviceRepository.getDevicesOrderByAsc();
+  }
+
+  getDeviceById(deviceId) {
+    return this.deviceRepository.getDeviceById(deviceId);
   }
 }
 

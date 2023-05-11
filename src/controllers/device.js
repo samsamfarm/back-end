@@ -33,7 +33,7 @@ const deviceService = new DeviceService();
     try {
       // DTO 생략(확정된 내용이 없음)
       const { device_id: deviceId } = req.body;
-      const userId = req?.session?.user_id || 1;
+      const userId = req?.session?.user_id || 7;
 
       await deviceService.validateDeviceId(deviceId);
 
@@ -76,11 +76,17 @@ const deviceService = new DeviceService();
    */
   router.get("/:id", async (req, res, next) => {
     try {
-      const id = req.params.id;
-      const device = await knex("devices").where("id", "=", id).first();
-      res.status(200).send(device)
+      const deviceId = req.params.id;
+
+      await deviceService.validateDeviceId(deviceId);
+      
+      await deviceService.vaildateNotFoundByDeviceId(deviceId);
+
+      const device = await deviceService.getDeviceById(deviceId);
+
+      res.send(device)
     } catch (error) {
-      next(err);
+      next(error);
     }
   });
 
@@ -108,8 +114,9 @@ const deviceService = new DeviceService();
    */
   router.get("/", async (req, res, next) => {
     try {
-      const devices = await knex("devices").select("*");
-      res.status(200).send(devices);
+      const devices = await deviceService.getDevices();
+
+      res.send(devices);
     } catch(err) {
       next(err);
     }
@@ -144,7 +151,7 @@ const deviceService = new DeviceService();
   // TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행
   router.post(`/control`, async (req, res, next) => {
     try {
-      const {data} = new deviceControlDTO(req.body);
+      const {command} = new deviceControlDTO(req.body);
       
       await deviceService.sendMQTTByMessage(data);
       
