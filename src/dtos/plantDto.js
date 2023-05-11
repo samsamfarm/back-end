@@ -34,36 +34,22 @@ const { BadRequest } = require("../errors");
  *           description: 작물이 삭제된 날짜 입니다.
  */
 class CreatePlantRequestDTO {
-  user_id;
-  device_id;
-  plant_type;
+  
+  data;
 
-  constructor(data) {
-    const { user_id, device_id, plant_type } = data;
-
-    if (
-      user_id === undefined ||
-      device_id === undefined ||
-      plant_type === undefined
-    ) {
-      throw new BadRequest("Missing Parameter");
+  constructor(requestData) {
+    const requireData = [user_id, device_id, plant_type];
+    const errorMessage = checkMissingParams(requestData, requireData)
+    
+    if (errorMessage) {
+        throw new BadRequest(errorMessage);
     }
 
-    if (typeof user_id !== "number" || user_id < 1) {
-      throw new BadRequest("Invalid user_id");
+    this.data = {
+      userId: requestData.user_id,
+      deviceId: requestData.device_id,
+      plantType: requestData.plant_type,
     }
-
-    if (typeof device_id !== "number" || device_id < 1) {
-      throw new BadRequest("Invalid device_id");
-    }
-
-    if (typeof plant_type !== "string" || plant_type.length > 20) {
-      throw new BadRequest("Invalid plant_type");
-    }
-
-    this.user_id = user_id;
-    this.device_id = device_id;
-    this.plant_type = plant_type;
   }
 }
 

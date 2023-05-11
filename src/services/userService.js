@@ -8,12 +8,20 @@ class UserService {
         this.repository = new UserRepository();
     }
 
-    findUserByUserId(id) {
+    async findUserByUserId(id) {
+        await this.validateUserByUserId(id);
         return this.repository.findById(id);
     }
 
     createUser(user) {
         return this.repository.createUser(user);
+    }
+
+    async validateUserByUserId(userId) {
+        const userInfo = await this.repository.findById(userId);
+        if (userInfo == null) {
+            throw new BadRequest({user: "not_found"})
+        };
     }
 
     async validateUserByEmail(email) {

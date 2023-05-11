@@ -1,37 +1,28 @@
-const { BadRequest } = require("../errors");
+const {Repository} = require("./index");
 
-class PlantRepository {
+class PlantRepository extends Repository {
   constructor() {
+    super();
     this.table = "plants";
   }
 
-  async findById(id) {
-    const result = await this.__findByPrimaryKey(this.table, id);
-    if (result === undefined) throw new BadRequest("Not Found User");
-    return result;
-  }
+  // async findById(id) {
+  //   const result = await this.__findByPrimaryKey(this.table, id);
+  //   if (result === undefined) throw new BadRequest("Not Found User");
+  //   return result;
+  // }
 
-  async create(plant) {
-    const userId = await this.db(this.table)
-      .insert(plant)
-      .catch((error) => {
-        console.log(String(error));
-        if (error.errno == 1062) {
-          throw new BadRequest("Create Plant Failed - Duplicate Email");
-        } else {
-          throw new BadRequest("Create Plant Failed");
-        }
-      });
-
-      const result = await this.findById(userId[0]);
-      return result;
+  createPlant(data) {
+    return this.db(this.table).returning("*").insert({
+      user_id: data.userId,
+      device_id: data.deviceId,
+      plant_type: data.plantType,
+    });
   }
-  
-  // TODO: getplant 만들어야함
-  async getPlant() {
-    // 
+  getPlantByUserId(userId) {
+    return this.db(this.table).select("*").where({
+      user_id: userId,
+    });
   }
-
 }
-
 module.exports = PlantRepository;

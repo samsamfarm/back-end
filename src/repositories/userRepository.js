@@ -11,9 +11,7 @@ class UserRepository extends Repository {
   }
 
   async findById(id) {
-    const result = await this.__findByPrimaryKey(this.table, id);
-    if (result === undefined) throw new BadRequest("Not Found User");
-    return result;
+    return this.__findByPrimaryKey(this.table, id);
   }
 
   findByEmail(email) {
