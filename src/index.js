@@ -80,10 +80,10 @@ class App {
     this.mqttHandler.subscribeByDevicePlant()
 
     // cron 스케줄 등록
-    const job = new cron.CronJob('*/1 * * * *', () => {
-      console.log(`The time is now ${new Date()}`);
-    });
-    job.start();
+    // const job = new cron.CronJob('*/1 * * * *', () => {
+    //   console.log(`The time is now ${new Date()}`);
+    // });
+    // job.start();
   }
 }
 

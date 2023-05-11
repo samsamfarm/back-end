@@ -107,7 +107,7 @@ router.get("/:user_id", async (req, res, next) => {
    * @swagger
    * /api/plant/:
    *   get:
-   *     summary: 전체 유저의 작물 성장 단계 조회
+   *     summary: 전체 유저의 작물 조회
    *     tags: [plant]
    *     requestBody:
    *       required: true
