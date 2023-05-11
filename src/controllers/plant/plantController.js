@@ -120,7 +120,7 @@ router.get("/", async (req, res, next) => {
     const userPlants = await knex
       .select("*")
       .from("plants");
-      res.status(200).json(userPlants);
+      res.status(200).json({data: userPlants});
    } catch (err) {
      if (err instanceof BadRequest) {
      } else {
