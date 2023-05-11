@@ -7,7 +7,7 @@ const router = express.Router();
 
   /**
    * @swagger
-   * /api/plant:
+   * /api/v1/plant:
    *   post:
    *     summary: 새로운 작물 생성(배정)
    *     tags: [plant]
@@ -63,7 +63,7 @@ router.post("/", (req, res, next) => {
 
    /**
    * @swagger
-   * /api/plant/:user_id:
+   * /api/v1/plant/:user_id:
    *   get:
    *     summary: 특정 유저의 작물 성장 단계 조회
    *     tags: [plant]
@@ -105,7 +105,7 @@ router.get("/:user_id", async (req, res, next) => {
 
   /**
    * @swagger
-   * /api/plant/:
+   * /api/v1/plant/:
    *   get:
    *     summary: 전체 유저의 작물 조회
    *     tags: [plant]

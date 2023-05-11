@@ -131,7 +131,6 @@ class PlantDTO {
   }
 }
 
-
 module.exports = {
   CreatePlantRequestDTO,
   PlantDTO,
