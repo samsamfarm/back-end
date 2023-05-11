@@ -36,11 +36,11 @@ class App {
     // this.app.use("/posts", postsRouter);
 
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use("/api/article",require("./controllers/articleController/article"));
-    this.app.use("/api/auth", require("./controllers/auth"));
-    this.app.use("/api/device", require("./controllers/device"));
-    this.app.use("/api/plant", require("./controllers/plantController/plant"));
-    this.app.use("/api/user", require("./controllers/user"));
+    this.app.use("/api/v1/article",require("./controllers/articleController/article"));
+    this.app.use("/api/v1/auth", require("./controllers/auth"));
+    this.app.use("/api/v1/device", require("./controllers/device"));
+    this.app.use("/api/v1/plant", require("./controllers/plantController/plant"));
+    this.app.use("/api/v1/user", require("./controllers/user"));
   }
 
   registerErrorHandlers() {

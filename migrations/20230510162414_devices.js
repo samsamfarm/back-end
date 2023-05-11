@@ -35,7 +35,7 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable("devices", (table) => {
-        table.increments("id").primary();
+        table.integer("id").primary();
         table.integer("user_id").unsigned();
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table.datetime("updated_at");

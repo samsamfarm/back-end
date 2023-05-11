@@ -9,7 +9,7 @@ const deviceService = new DeviceService();
 
   /**
    * @swagger
-   * /api/device:
+   * /api/v1/device:
    *   post:
    *     summary: 새로운 디바이스 생성(새로운 회원에게 배정)
    *     tags: [device]
@@ -19,13 +19,6 @@ const deviceService = new DeviceService();
    *         application/json:
    *           schema:
    *             $ref: '#/components/schemas/devices'
-   *     parameters:
-   *       - name: device_order
-   *         in: query
-   *         required: true
-   *         description: 디바이스 목록조회를 위한 디바이스의 번호
-   *         schema:
-   *           type: number
    *     responses:
    *       200:
    *         description: 디바이스 생성 완료.
@@ -38,13 +31,15 @@ const deviceService = new DeviceService();
    */
   router.post("/", async (req, res, next) => {
     try {
-      const { user_id } = req.body;
-      const [device_id] = await knex("devices").insert({ user_id });
+      // DTO 생략(확정된 내용이 없음)
+      const { device_id: deviceId } = req.body;
+      const userId = req?.session?.user_id || 1;
 
-      res.status(201).json({
-        message: "new device created",
-        device: { device_id, user_id },
-      });
+      await deviceService.validateDeviceId(deviceId);
+
+      await deviceService.createDevice(deviceId, userId);
+
+      res.json({data: 'ok'});
     } catch (error) {
       next(error);
     }
@@ -52,7 +47,7 @@ const deviceService = new DeviceService();
 
 /**
    * @swagger
-   * /api/device/:id:
+   * /api/v1/device/:id:
    *   get:
    *     summary: 특정 디바이스 조회
    *     tags: [device]
@@ -91,7 +86,7 @@ const deviceService = new DeviceService();
 
   /**
    * @swagger
-   * /api/device:
+   * /api/v1/device:
    *   get:
    *     summary: 전체 디바이스 목록 조회 
    *     tags: [device]
