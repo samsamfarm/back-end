@@ -2,7 +2,7 @@ const express = require("express");
 const MqttHandler = require("../workers/mqtt/mqttWorker");
 const knex = require("../config/knexClient");
 const router = express.Router();
-const deviceControlDTO = require("../dtos/deviceControlDTO");
+const deviceControlDTO = require("../dtos/deviceControlDto");
 const DeviceService = require('../services/deviceService');
 
 const deviceService = new DeviceService();
@@ -84,7 +84,7 @@ const deviceService = new DeviceService();
 
       const device = await deviceService.getDeviceById(deviceId);
 
-      res.send(device)
+      res.send({data: device})
     } catch (error) {
       next(error);
     }
@@ -116,7 +116,7 @@ const deviceService = new DeviceService();
     try {
       const devices = await deviceService.getDevices();
 
-      res.send(devices);
+      res.send({data: devices});
     } catch(err) {
       next(err);
     }
@@ -141,7 +141,7 @@ const deviceService = new DeviceService();
         .orderBy("device_logs.created_at", "desc")
         .limit(1);
 
-      res.status(200).json({ result });
+      res.json({ dataa: result });
     } catch (error) {
       next(error);
     }

@@ -32,7 +32,7 @@ const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO
       const user = new CreateUserRequestDTO(req.body);
       const result = new UserDTO(await userService.createUser(user));
 
-      res.json(result);
+      res.json({data: result});
     } catch (error) {
       next(error);
     }
@@ -74,7 +74,7 @@ const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO
 
       const result = new LoginUserResponseDTO(loginUser);
 
-      res.json(result);
+      res.json({data: result});
     } catch (error) {
       next(error);
     }

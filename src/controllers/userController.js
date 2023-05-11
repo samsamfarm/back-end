@@ -38,7 +38,7 @@ module.exports = () => {
     try {
       const user = new UserDTO(await userService.findUserByUserId(req.params.id));
 
-      res.json(user);
+      res.json({data: user});
     } catch (error) {
       next(error);
     }
@@ -104,7 +104,7 @@ module.exports = () => {
     try {
         const result = await userService.deleteUser(req.params.id);
         if(result == 1) {
-            res.json({"message":"User Delete Success"});
+            res.json({data: "ok"});
         }
         else {
             throw new InternalServerError("User Delete Failed");
