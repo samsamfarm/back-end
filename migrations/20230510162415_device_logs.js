@@ -41,6 +41,7 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable("device_logs", (table) => {
+        table.increments("id").primary();
         table.integer("device_id").unsigned();
         table.decimal("temperature", 3, 1);
         table.decimal("humid", 3, 1);

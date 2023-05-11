@@ -1,4 +1,5 @@
 require("dotenv").config();
+const knexClient = require("../../config/knexClient");
 
 const mqtt = require("mqtt");
 
@@ -11,6 +12,7 @@ const options = {
 class MqttHandler {
   constructor() {
     this.client = mqtt.connect(options);
+    this.db = knexClient;
   }
 
   subscribe(topic) {
@@ -25,13 +27,15 @@ class MqttHandler {
 
   getMassage(callback) {
     this.client.on("message", (topic, message) => {
+      // buffer to JSON
+      const jsonFormat = JSON.parse(message.toString());
       const data = {
-        device_id: message.device_id,
-        temperature: message.temperature,
-        humid: message.temperature,
-        moisture: message.humidity,
-        bright: message.bright,
-        creatd_at: new Date(),
+        device_id: jsonFormat.device_id,
+        temperature: jsonFormat.temperature,
+        humid: jsonFormat.humid,
+        moisture: jsonFormat.moisture,
+        bright: jsonFormat.bright,
+        creatd_at: jsonFormat.creatd_at,
       };
       callback(data);
     });
@@ -47,7 +51,7 @@ class MqttHandler {
     this.subscribe(`device/+/plant/#`);
     this.getMassage (async (data) => {
       try {
-        await knex("device_logs").insert({
+        await this.db("device_logs").insert({
           device_id: data.device_id,
           temperature: data.temperature,
           humid: data.humid,
@@ -55,8 +59,12 @@ class MqttHandler {
           bright: data.bright,
           created_at: data.timestamp,
         });
+
+        const returnData = await this.db('device_logs').select('*').where({device_id: data.device_id});
+        console.log(returnData);
+        
       } catch (error) {
-        next(error);
+        console.log(error);
       }
     });
   }
