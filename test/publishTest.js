@@ -10,9 +10,19 @@ const options = {
 
 const client = mqtt.connect(options);
 
+
 client.on("connect", () => {
   setInterval(() => {
-    console.log("publishing");
-    client.publish("test_topic", "hello world");
+    let info = {
+      device_id: 1,
+      temperature: 25.6,
+      humid: 75,
+      moisture: 65.6,
+      bright: 500,
+      created_at: new Date(),
+    };
+    let message = JSON.stringify(info);
+    console.log("publishing", message);
+    client.publish("device/device01/plant/data", message);
   }, 1000);
 });
