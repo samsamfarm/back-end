@@ -162,7 +162,7 @@ module.exports = (connection) => {
     res.json({ date: "ok" });
   });
 
-  router.use("/comment", require("./comment")(this.connection));
+  router.use("/comment", require("./commentController")(this.connection));
   
   return router;
 };

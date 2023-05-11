@@ -1,15 +1,15 @@
 require('dotenv').config();
 
-const express = require("express");
 const cron = require("cron");
+const cors = require("cors");
+const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 
-const cors = require("cors");
-
 const specs = require("./config/swaggerConfig");
+const MqttHandler = require("./workers/mqtt/mqttWorker");
 
 const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
-const MqttHandler = require("./workers/mqtt/mqttWorker");
+
 
 class App {
   constructor() {
@@ -36,11 +36,11 @@ class App {
     // this.app.use("/posts", postsRouter);
 
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use("/api/v1/article",require("./controllers/articleController/article"));
-    this.app.use("/api/v1/auth", require("./controllers/auth"));
-    this.app.use("/api/v1/device", require("./controllers/device"));
-    this.app.use("/api/v1/plant", require("./controllers/plantController/plant"));
-    this.app.use("/api/v1/user", require("./controllers/user"));
+    this.app.use("/api/v1/article",require("./controllers/article/articleController"));
+    this.app.use("/api/v1/auth", require("./controllers/authController"));
+    this.app.use("/api/v1/device", require("./controllers/deviceController"));
+    this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
+    this.app.use("/api/v1/user", require("./controllers/userController"));
   }
 
   registerErrorHandlers() {
@@ -77,15 +77,13 @@ class App {
   }
 
   scheduleJobs() {
-    this.mqttHandler.subscribeByDevicePlant()
+    this.mqttHandler.subscribeByDevicePlant();
 
     // cron 스케줄 등록
-    // const job = new cron.CronJob('*/1 * * * *', () => {
-    //   console.log(`The time is now ${new Date()}`);
-    // });
-    // job.start();
+    new cron.CronJob('*/1 * * * *', () => {
+      console.log(`The time is now ${new Date()}`);
+    }).start();
   }
 }
 
 new App();
-

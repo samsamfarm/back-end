@@ -1,6 +1,6 @@
 const express = require("express");
 const knex = require("../../config/knexClient");
-const { CreatePlantRequestDTO } = require("../plantController/../../dtos/plantDto");
+const { CreatePlantRequestDTO } = require("../../dtos/plantDto");
 const PlantService = require("../../services/plantService"); 
 const UserService = require("../../services/userService");
 

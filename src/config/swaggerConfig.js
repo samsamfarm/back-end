@@ -41,8 +41,8 @@ const options = {
     "./src/controllers/*.js",
     "./src/services/*.js",
     "./src/errors/*.js",
-    "./src/controllers/articleController/*.js",
-    "./src/controllers/plantController/*.js",
+    "./src/controllers/article/*.js",
+    "./src/controllers/plant/*.js",
   ],
 };
 
