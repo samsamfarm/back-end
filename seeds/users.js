@@ -3,14 +3,16 @@
  * @returns { Promise<void> } 
  */
 exports.seed = async function(knex) {
-  // Deletes ALL existing entries
-  // await knex('users').insert([
-  //   {email: "asd1", name: "1asd", nickname: "a1sd", password: "asd", mbti: "asd", phone: "asd"},
-  //   {email: "asd2", name: "2asd", nickname: "a2sd", password: "asd", mbti: "asd", phone: "asd"},
-  //   {email: "asd3", name: "3asd", nickname: "a3sd", password: "asd", mbti: "asd", phone: "asd"},
-  //   {email: "asd4", name: "4asd", nickname: "a4sd", password: "asd", mbti: "asd", phone: "asd"}
-  // ]);
-  await knex('devices').insert([
-    {user_id: "5"},
-  ]);
+    await knex("users").insert([
+      {
+        email: "elice@elice.io",
+        name: "elice",
+        nickname: "엘리스",
+        password:
+          "$2a$10$j0tScKX94a7YDiNNbKVRluWOlsRnIW2TehsvcJLu.tnF3a1zsb7Re", // password
+        mbti: "ENTJ",
+        phone: "010-9999-9999",
+      },
+    ]);
+    await knex("devices").insert([{ user_id: "1" }]);
 };

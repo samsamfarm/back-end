@@ -7,7 +7,7 @@ exports.up = function(knex) {
         table.increments("id").primary();
         table.integer("user_id").unsigned();
         table.integer("article_id").unsigned();
-        table.text("content", 255).notNullable();
+        table.text("content").notNullable();
         table.foreign("user_id").references("users.id");
         table.foreign("article_id").references("articles.id");
     });

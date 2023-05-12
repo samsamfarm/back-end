@@ -51,6 +51,11 @@ exports.up = function (knex) {
         table.enu("current_grade", ["1", "2", "3", "4"]).defaultTo("1");
         table.datetime("plant_grade_update_time");
         table.timestamp("created_at").defaultTo(knex.fn.now());
+        table
+          .datetime("updated_at")
+          .defaultTo(
+            Database.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+          );
         table.datetime("deleted_at").nullable();
       });
     }

@@ -62,17 +62,21 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable("users", (table) => {
-        table.increments("id").primary();
-        table.string("email", 20).notNullable();
-        table.string("name", 20).notNullable();
-        table.string("nickname", 20).notNullable();
-        table.string("password", 60).notNullable(); // 60 is bcrypt encoded password length
-        table.string("mbti", 4).notNullable();
-        table.string("phone", 15).notNullable();
-        table.datetime("created_at").defaultTo(knex.fn.now());
-        table.datetime("updated_at");
-        table.datetime("deleted_at");
-        table.unique("email");
+      table.increments("id").primary();
+      table.string("email", 255).notNullable();
+      table.string("name", 20).notNullable();
+      table.string("nickname", 20).notNullable();
+      table.string("password", 255).notNullable(); // 60 is bcrypt encoded password length
+      table.string("mbti", 4).notNullable();
+      table.string("phone", 15).notNullable();
+      table.datetime("created_at").defaultTo(knex.fn.now());
+      table
+        .datetime("updated_at")
+        .defaultTo(
+          Database.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        );
+      table.datetime("deleted_at");
+      table.unique("email");
     });
 };
 

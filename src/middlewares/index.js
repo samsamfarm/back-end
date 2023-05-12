@@ -1,5 +1,5 @@
-const VerifyToken = require("./verifyToken.js");
+const verifyToken = require("./verifyToken.js");
 
 module.exports = {
-    VerifyToken
+    verifyToken
 }
