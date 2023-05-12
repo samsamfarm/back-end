@@ -24,10 +24,10 @@
 exports.up = function(knex) {
     return knex.schema.createTable("actuators", (table) => {
         table.increments("id").primary();
-        table.integer("device_id").unsigned();
-        table.enu("wind_command", ["on", "off"]).defaultTo("off");
-        table.enu("water_command", ["on", "off"]).defaultTo("off");
-        table.enu("light_command", ["on", "off"]).defaultTo("off");
+        table.integer("device_id");
+        table.boolean("wind_command").defaultTo(false)
+        table.boolean("water_command").defaultTo(false)
+        table.boolean("light_command").defaultTo(false)
         table.dateTime("created_at").defaultTo(knex.fn.now());
         table.foreign("device_id").references("devices.id");
     });
