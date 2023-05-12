@@ -24,9 +24,10 @@ class UserRepository extends Repository {
       .catch((error) => {
         console.log(String(error));
         if (error.errno == 1062) {
-          throw new BadRequest("Create User Failed - Duplicate Email");
+          // FIXME: Repository 에서는 에러 핸들링을 해주면 안되고, 에러가 발생하지 않기 위해 미리 검증을 해주어야 한다. 
+          throw new BadRequest({ email: "duplicate" });
         } else {
-          throw new BadRequest("Create User Failed");
+          throw new BadRequest({ email : "failed"});
         }
       });
 
