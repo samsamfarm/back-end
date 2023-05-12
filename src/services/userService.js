@@ -3,8 +3,6 @@ const UserRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-require('dotenv').config();
-
 class UserService {
     constructor() {
         this.repository = new UserRepository();
@@ -54,16 +52,16 @@ class UserService {
     }
 
      async getLoginInfoByUser(user) {
-        const result = await this.repository.findByEmail(user.email);
-        if (result === null) {
+        const userInfo = await this.repository.findByEmail(user.email);
+        if (userInfo === null) {
             throw new Error("Not Found User");
         }
 
         
         // Create JWT
         const tokenPayload = {
-            id: result.id,
-            email: result.email,
+            id: userInfo.id,
+            email: userInfo.email,
         };
 
         const tokenOptions = {
@@ -74,9 +72,9 @@ class UserService {
 
         const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions)
 
-        result.accessToken = accessToken;
+        userInfo.accessToken = accessToken;
 
-        return result;
+        return userInfo;
     }
 
     async updateUser(user) {
