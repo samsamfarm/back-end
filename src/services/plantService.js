@@ -28,6 +28,11 @@ class PlantService {
 
     throw new BadRequest({plant: "not_found"});
   }
+  getAllPlant() {
+    const getPlants = this.plantRepository.getAllPlant();
+      return getPlants;
+  }
+
 }
 
 module.exports = PlantService;

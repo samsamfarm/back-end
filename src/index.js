@@ -78,6 +78,7 @@ class App {
 
   scheduleJobs() {
     this.mqttHandler.subscribeByDevicePlant();
+    this.mqttHandler.actuatorControlToDevice();
 
     // cron 스케줄 등록
     new cron.CronJob('*/1 * * * *', () => {

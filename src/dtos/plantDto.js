@@ -1,5 +1,5 @@
 const { BadRequest } = require("../errors");
-
+const checkMissingParams = require("../utils/validation")
 /**
  * @swagger
  * components:
@@ -49,7 +49,7 @@ class CreatePlantRequestDTO {
       userId: requestData.user_id,
       deviceId: requestData.device_id,
       plantType: requestData.plant_type,
-    }
+    };
   }
 }
 
