@@ -247,6 +247,11 @@ class UpdateUserRequestDTO {
     phone;
 
     constructor(userId, requestData) {
+        requestData = {
+            id: requestData.id,
+            ...requestData.body,
+        }
+
         const requireData = ['password', 'phone', 'name', 'nickname'];
         const errorMessage = checkMissingParams(requestData, requireData)
       
