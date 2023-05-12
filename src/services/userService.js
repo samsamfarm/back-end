@@ -1,7 +1,9 @@
 const { BadRequest, InternalServerError } = require('../errors');
 const UserRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
+require('dotenv').config();
 
 class UserService {
     constructor() {
@@ -52,12 +54,29 @@ class UserService {
     }
 
      async getLoginInfoByUser(user) {
-        const userInfo = await this.repository.findByEmail(user.email);
-        if (userInfo === null) {
+        const result = await this.repository.findByEmail(user.email);
+        if (result === null) {
             throw new Error("Not Found User");
         }
 
-        return userInfo;
+        
+        // Create JWT
+        const tokenPayload = {
+            id: result.id,
+            email: result.email,
+        };
+
+        const tokenOptions = {
+            algorithm : "HS256",
+            expiresIn : "1m",
+            issuer : "samsamfarm"
+        }
+
+        const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions)
+
+        result.accessToken = accessToken;
+
+        return result;
     }
 
     async updateUser(user) {

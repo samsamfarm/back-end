@@ -9,6 +9,7 @@ const specs = require("./config/swaggerConfig");
 const MqttHandler = require("./workers/mqtt/mqttWorker");
 
 const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
+const { VerifyToken } = require('./middlewares');
 
 
 class App {
@@ -40,7 +41,7 @@ class App {
     this.app.use("/api/v1/auth", require("./controllers/authController"));
     this.app.use("/api/v1/device", require("./controllers/deviceController"));
     this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
-    this.app.use("/api/v1/user", require("./controllers/userController"));
+    this.app.use("/api/v1/user", VerifyToken, require("./controllers/userController"));
   }
 
   registerErrorHandlers() {

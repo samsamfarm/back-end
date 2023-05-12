@@ -4,6 +4,7 @@ const express = require("express");
 const UserService = require("../services/userService");
 const { UserDTO, UpdateUserRequestDTO } = require("../dtos/userDto");
 const { InternalServerError } = require("../errors");
+const { VerifyToken } = require("../middlewares");
 
 module.exports = () => {
   const router = express.Router();

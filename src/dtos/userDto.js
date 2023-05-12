@@ -125,6 +125,7 @@ class LoginUserResponseDTO {
     email;
     name;
     nickname;
+    accessToken;
 
     constructor(data)
     {
@@ -132,6 +133,7 @@ class LoginUserResponseDTO {
         this.email = data.email;
         this.name = data.name;
         this.nickname = data.nickname;
+        this.accessToken = data.accessToken;
     }
 }
 
