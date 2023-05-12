@@ -30,7 +30,10 @@ const userService = new UserService();
 router.post('/sign-up', async (req, res, next) => {
   try {
     const user = new CreateUserRequestDTO(req.body);
-    const result = new UserDTO(await userService.createUser(user));
+
+    const userInfo = await userService.createUser(user);
+    
+    const result = new UserDTO(userInfo);
 
     res.json({data: result});
   } catch (error) {
