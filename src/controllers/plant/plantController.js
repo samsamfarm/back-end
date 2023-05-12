@@ -117,17 +117,12 @@ router.get("/:user_id", async (req, res, next) => {
  */
 router.get("/", async (req, res, next) => {
    try {
-    const userPlants = await knex
-      .select("*")
-      .from("plants");
-      res.status(200).json({data: userPlants});
+    const allPlants = await plantService.getAllPlant();
+      res.json({ data: allPlants });
    } catch (err) {
-     if (err instanceof BadRequest) {
-     } else {
        next(err);
-     }
    }
   });
-  
 
 module.exports = router;
+

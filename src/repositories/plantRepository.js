@@ -24,5 +24,8 @@ class PlantRepository extends Repository {
       user_id: userId,
     });
   }
+  getAllPlant() {
+    return this.db(this.table).select("*").from("plants");   
+  }
 }
 module.exports = PlantRepository;

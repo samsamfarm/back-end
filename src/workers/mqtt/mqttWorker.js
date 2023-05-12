@@ -46,10 +46,9 @@ class MqttHandler {
     console.log(`Published ${JSON.stringify(message)} to ${topic}`);
   }
 
-  
   subscribeByDevicePlant() {
     this.subscribe(`device/+/plant/#`);
-    this.getMassage (async (data) => {
+    this.getMassage(async (data) => {
       try {
         await this.db("device_logs").insert({
           device_id: data.device_id,
@@ -60,14 +59,33 @@ class MqttHandler {
           created_at: data.timestamp,
         });
 
-        const returnData = await this.db('device_logs').select('*').where({device_id: data.device_id});
+        const returnData = await this.db("device_logs")
+          .select("*")
+          .where({ device_id: data.device_id });
         console.log(returnData);
-        
       } catch (error) {
         console.log(error);
       }
     });
   }
+  
+ 
+  actuatorControlToDevice() {
+    this.db("actuators")
+    .select("wind_command", "water_command", "light_command")
+    .then(result => {
+      const message = {
+        wind_command: result[0].wind_command,
+        water_command: result[0].water_command,
+        light_command: result[0].light_command,
+      };
+      this.publish("actuator/controll", message );
+    })
+    .catch((error) => {
+       console.log(error);
+    })
+  }
 }
+  
 
 module.exports = MqttHandler;

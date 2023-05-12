@@ -19,6 +19,8 @@ class DeviceRepository extends Repository {
     // NOTE: created_at 가장 오래된 순으로 정렬
     return this.db(this.table).select().orderBy('created_at', 'asc');
   }
+  
+
 }
 
 
