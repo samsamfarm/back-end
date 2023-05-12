@@ -32,7 +32,7 @@ router.post('/sign-up', async (req, res, next) => {
     const user = new CreateUserRequestDTO(req.body);
 
     const userInfo = await userService.createUser(user);
-    
+
     const result = new UserDTO(userInfo);
 
     res.json({data: result});
@@ -43,26 +43,25 @@ router.post('/sign-up', async (req, res, next) => {
 
 /**
  * @swagger
- 
-  * /api/v1/auth/sign-in:
-  *   post:
-  *     summary: 유저 로그인
-  *     tags: [auth]
-  *     requestBody:
-  *       $ref: '#/components/dtos/LoginUserRequestDTO/requestBody'
-  *     responses:
-  *       200:
-  *         description: 로그인 성공.
-  *         content:
-  *           application/json:
-  *             schema:
-  *               $ref: '#/components/dtos/LoginUserResponseDTO'
-  *       400:
-  *         description: Invalid Sign-in.
-  *       500:
-  *         description: Server Error.
-  *
-  */
+ * /api/v1/auth/sign-in:
+ *   post:
+ *     summary: 유저 로그인
+ *     tags: [auth]
+ *     requestBody:
+ *       $ref: '#/components/dtos/LoginUserRequestDTO/requestBody'
+ *     responses:
+ *       200:
+ *         description: 로그인 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/dtos/LoginUserResponseDTO'
+ *       400:
+ *         description: Invalid Sign-in.
+ *       500:
+ *         description: Server Error.
+ *
+ */
 router.post('/sign-in', async (req, res, next) => {
   try {
     const user = new LoginUserRequestDTO(req.body);
