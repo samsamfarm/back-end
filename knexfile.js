@@ -1,12 +1,12 @@
-require('dotenv').config();
+require("dotenv").config();
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 module.exports = {
   development: {
-    client: 'mysql2',
-    debug: process.env.DB_DEBUG_MODE == 0 ? true : false,
+    client: "mysql2",
+    debug: process.env?.DB_DEBUG_MODE == 0,
     connection: {
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
@@ -17,10 +17,10 @@ module.exports = {
     asyncStackTraces: true,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: "knex_migrations",
     },
     log: {
       warn(msg) {
@@ -38,8 +38,8 @@ module.exports = {
     },
   },
   staging: {
-    client: 'mysql2',
-    debug: process.env.DB_DEBUG_MODE == 0 ? true : false,
+    client: "mysql2",
+    debug: process.env?.DB_DEBUG_MODE == 0,
     connection: {
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
@@ -50,10 +50,10 @@ module.exports = {
     asyncStackTraces: true,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: "knex_migrations",
     },
     log: {
       warn(msg) {
@@ -71,8 +71,8 @@ module.exports = {
     },
   },
   production: {
-    client: 'mysql2',
-    debug: process.env.DB_DEBUG_MODE == 0 ? true : false,
+    client: "mysql2",
+    debug: process.env?.DB_DEBUG_MODE == 0,
     connection: {
       host: process.env.MYSQL_HOST,
       user: process.env.MYSQL_USER,
@@ -83,10 +83,10 @@ module.exports = {
     asyncStackTraces: true,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: "knex_migrations",
     },
     log: {
       warn(msg) {
@@ -102,5 +102,5 @@ module.exports = {
         console.log(msg);
       },
     },
-  }
+  },
 };

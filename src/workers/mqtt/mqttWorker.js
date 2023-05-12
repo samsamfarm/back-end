@@ -10,58 +10,35 @@ class MqttHandler {
       protocol: "mqtt",
     };
 
-    this.client = mqtt.connect(this.config);
+    this.client = mqtt.connect(config);
     this.db = knexClient;
   }
 
-  subscribe(topic) {
+  subscribeByDevicePlant() {
     this.client.on("connect", () => {
-      this.client.subscribe(topic, (error) => {
-        if (!error) {
-          console.log(`Mqtt subscribed to ${topic}`);
+      this.client.subscribe("device/plant", (err) => {
+        if (err) {
+          console.log(err);
         }
       });
     });
-  }
 
-  getMassage(callback) {
-    this.client.on("message", (topic, message) => {
-      // buffer to JSON
-      const jsonFormat = JSON.parse(message.toString());
-      const data = {
-        device_id: jsonFormat.device_id,
-        temperature: jsonFormat.temperature,
-        humid: jsonFormat.humid,
-        moisture: jsonFormat.moisture,
-        bright: jsonFormat.bright,
-        creatd_at: jsonFormat.creatd_at,
-      };
-      callback(data);
-    });
-  }
-
-  publish(topic, message) {
-    this.client.publish(topic, JSON.stringify(message));
-    console.log(`Published ${JSON.stringify(message)} to ${topic}`);
-  }
-
-  subscribeByDevicePlant() {
-    this.subscribe(`device/plant`);
-    this.getMassage(async (data) => {
+    this.client.on("message", async (topic, message) => {
+      console.log(topic, message.toString());
       try {
-        await this.db("device_logs").insert({
-          device_id: data.device_id,
-          temperature: data.temperature,
-          humid: data.humid,
-          moisture: data.moisture,
-          bright: data.bright,
-          created_at: data.timestamp,
-        });
+        const jsonFormat = JSON.parse(message.toString());
+        if (jsonFormat?.device_id == null) {
+          jsonFormat.device_id = 1;
+        }
 
-        const returnData = await this.db("device_logs")
-          .select("*")
-          .where({ device_id: data.device_id });
-        console.log(returnData);
+        await this.db("device_logs").insert({
+          device_id: jsonFormat?.device_id,
+          temperature: jsonFormat.temperature,
+          humid: jsonFormat.humid,
+          moisture: jsonFormat.moisture,
+          bright: jsonFormat.bright,
+          created_at: jsonFormat.timestamp,
+        });
       } catch (error) {
         console.log(error);
       }
@@ -82,10 +59,10 @@ class MqttHandler {
           water_command: actuator.water_command,
           light_command: actuator.light_command,
         };
-        this.publish(`actuator/control`, message);
+        this.client.publish("actuator/control", JSON.stringify(message));
       });
     } catch (error) {
-      console.log("16df8ddb-5e40-4a0b-b4c0-54edfadb213e", error);
+      // console.log("16df8ddb-5e40-4a0b-b4c0-54edfadb213e", error);
     }
   }
 }

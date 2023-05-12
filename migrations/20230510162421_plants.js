@@ -45,11 +45,10 @@ exports.up = function (knex) {
         table.integer("user_id").unsigned().references("id").inTable("users");
         table
           .integer("device_id")
-          .unsigned()
           .references("id")
           .inTable("devices");
         table.string("plant_type", 20);
-        table.enum("current_grade", ["1", "2", "3", "4"]).defaultTo("1");
+        table.enu("current_grade", ["1", "2", "3", "4"]).defaultTo("1");
         table.datetime("plant_grade_update_time");
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table.datetime("deleted_at").nullable();

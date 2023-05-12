@@ -42,12 +42,12 @@
 exports.up = function(knex) {
     return knex.schema.createTable("device_logs", (table) => {
         table.increments("id").primary();
-        table.integer("device_id").unsigned();
-        table.decimal("temperature", 3, 1);
-        table.decimal("humid", 3, 1);
+        table.decimal("temperature", 5, 1);
+        table.decimal("humid", 5, 1);
         table.bigInteger("bright");
-        table.decimal("moisture", 3, 1);
+        table.decimal("moisture", 5, 1);
         table.timestamp("created_at").defaultTo(knex.fn.now());
+        table.integer("device_id");
         table.foreign("device_id").references("devices.id");
     });
 };

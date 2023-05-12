@@ -1,12 +1,17 @@
 exports.up = function (knex) {
   return knex.schema.createTable("determine_logs", (table) => {
-    table.integer("device_log_id").unsigned();
-    table.enu("temperature_state", ["red", "green"]);
-    table.enu("humid_state", ["red", "green"]);
-    table.enu("bright_state", ["red", "green"]);
-    table.enu("moisture_state", ["red", "green"]);
+    table.increments("id").primary();
+    table.integer("device_id");
+    table.integer("safe_min_temperature");
+    table.integer("safe_max_temperature");
+    table.integer("safe_min_humid");
+    table.integer("safe_max_humid");
+    table.integer("safe_min_bright");
+    table.integer("safe_max_bright");
+    table.integer("safe_min_moisture");
+    table.integer("safe_max_moisture");
     table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.foreign("device_log_id").references("device_logs.id");
+    table.foreign("device_id").references("devices.id");
   });
 };
 

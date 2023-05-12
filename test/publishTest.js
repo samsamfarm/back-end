@@ -10,7 +10,6 @@ const options = {
 
 const client = mqtt.connect(options);
 
-
 client.on("connect", () => {
   setInterval(() => {
     let info = {
@@ -23,6 +22,6 @@ client.on("connect", () => {
     };
     let message = JSON.stringify(info);
     console.log("publishing", message);
-    client.publish("device/device01/plant/data", message);
+    client.publish("device/plant", message);
   }, 1000);
 });
