@@ -38,13 +38,13 @@ class CreatePlantRequestDTO {
   data;
 
   constructor(requestData) {
-    const requireData = [user_id, device_id, plant_type];
+    const requireData = ['user_id', 'device_id', 'plant_type'];
     const errorMessage = checkMissingParams(requestData, requireData)
-    
+    console.log(requestData);
     if (errorMessage) {
         throw new BadRequest(errorMessage);
     }
-
+    console.log(errorMessage);
     this.data = {
       userId: requestData.user_id,
       deviceId: requestData.device_id,

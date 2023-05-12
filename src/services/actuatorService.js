@@ -1,12 +1,20 @@
 const ActuatorRepository = require("../repositories/actuatorRepository");
+const DeviceRepository = require("../repositories/deviceRepository");
+
+const {BadRequest} = require("../errors");
+
 
 class ActuatorService {
   constructor() {
     this.actuatorRepository = new ActuatorRepository();
   }
 
-  insertActuatorCommandToDB(data) {
-    return this.actuatorRepository.insertActuatorCommandToDB(data);
+  getActuatorsByUserId(userId) {
+    return this.actuatorRepository.getActuatorsByUserId(userId);
+  }
+
+  updateActuatorCommandToDB(data) {
+    return this.actuatorRepository.updateActuatorCommandToDB(data);
   }
 }
 

@@ -5,7 +5,7 @@ class ActuatorCommandDTO {
   data;
 
   constructor(requestData) {
-    const requireData = [wind_command, water_command, light_command];
+    const requireData = ['wind_command', 'water_command', 'light_command'];
     const errorMessage = checkMissingParamsBoolean(requestData, requireData);
 
     if (errorMessage) {
@@ -16,6 +16,7 @@ class ActuatorCommandDTO {
       windCommand: requestData.wind_command,
       waterCommand: requestData.water_command,
       lightCommand: requestData.light_command,
+      deviceId: requestData.device_id
     };
   }
 }
