@@ -38,21 +38,13 @@ class App {
 
   registerRoutes() {
     this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use(
-      "/api/v1/article",
-      require("./controllers/article/articleController")
-    );
     this.app.use("/api/v1/auth", require("./controllers/authController"));
+
+    this.app.use(verifyToken);
+    this.app.use("/api/v1/article",require("./controllers/article/articleController"));
     this.app.use("/api/v1/device", require("./controllers/deviceController"));
-    this.app.use(
-      "/api/v1/plant",
-      require("./controllers/plant/plantController")
-    );
-    this.app.use(
-      "/api/v1/user",
-      verifyToken,
-      require("./controllers/userController")
-    );
+    this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
+    this.app.use("/api/v1/user", require("./controllers/userController"));
   }
 
   registerErrorHandlers() {
