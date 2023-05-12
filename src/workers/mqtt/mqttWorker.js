@@ -3,8 +3,6 @@ const mqtt = require("mqtt");
 const knexClient = require("../../config/knexClient");
 
 class MqttHandler {
-
-  
   constructor() {
     const config = {
       host: process.env.MQTT_HOST,
@@ -48,7 +46,7 @@ class MqttHandler {
   }
 
   subscribeByDevicePlant() {
-    this.subscribe(`device/+/plant/#`);
+    this.subscribe(`device/plant`);
     this.getMassage(async (data) => {
       try {
         await this.db("device_logs").insert({
@@ -69,24 +67,27 @@ class MqttHandler {
       }
     });
   }
-  
- 
-  actuatorControlToDevice() {
-    this.db("actuators")
-    .select("wind_command", "water_command", "light_command")
-    .then(result => {
-      const message = {
-        wind_command: result[0].wind_command,
-        water_command: result[0].water_command,
-        light_command: result[0].light_command,
-      };
-      this.publish("actuator/controll", message );
-    })
-    .catch((error) => {
-       console.log(error);
-    })
+
+  async actuatorControlToDevice() {
+    try {
+      const actuators = await this.db("actuators").select(
+        "wind_command",
+        "water_command",
+        "light_command",
+        "device_id"
+      );
+      actuators.forEach((actuator) => {
+        const message = {
+          wind_command: actuator.wind_command,
+          water_command: actuator.water_command,
+          light_command: actuator.light_command,
+        };
+        this.publish(`actuator/control`, message);
+      });
+    } catch (error) {
+      console.log("16df8ddb-5e40-4a0b-b4c0-54edfadb213e", error);
+    }
   }
 }
-  
 
 module.exports = MqttHandler;

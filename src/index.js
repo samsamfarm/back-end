@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const cron = require("cron");
 const cors = require("cors");
@@ -8,15 +8,20 @@ const swaggerUi = require("swagger-ui-express");
 const specs = require("./config/swaggerConfig");
 const MqttHandler = require("./workers/mqtt/mqttWorker");
 
-const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
-const { VerifyToken } = require('./middlewares');
-
+const {
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalServerError,
+  NotFound,
+} = require("./errors");
+const { VerifyToken } = require("./middlewares");
 
 class App {
   constructor() {
     this.app = express();
     this.mqttHandler = new MqttHandler();
-    this.port = process.env?.PORT || 5000;
+    this.port = process.env?.API_PORT || 5000;
     this.registerMiddleware();
     this.registerRoutes();
     this.registerErrorHandlers();
@@ -32,12 +37,22 @@ class App {
   }
 
   registerRoutes() {
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use("/api/v1/article",require("./controllers/article/articleController"));
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+    this.app.use(
+      "/api/v1/article",
+      require("./controllers/article/articleController")
+    );
     this.app.use("/api/v1/auth", require("./controllers/authController"));
     this.app.use("/api/v1/device", require("./controllers/deviceController"));
-    this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
-    this.app.use("/api/v1/user", VerifyToken, require("./controllers/userController"));
+    this.app.use(
+      "/api/v1/plant",
+      require("./controllers/plant/plantController")
+    );
+    this.app.use(
+      "/api/v1/user",
+      VerifyToken,
+      require("./controllers/userController")
+    );
   }
 
   registerErrorHandlers() {
@@ -60,7 +75,7 @@ class App {
         return;
       } else {
         console.error(err);
-        res.status(500).send({ message: 'INTERNAL_SERVER_ERROR' });
+        res.status(500).send({ message: "INTERNAL_SERVER_ERROR" });
         return;
       }
     });
@@ -75,11 +90,10 @@ class App {
 
   scheduleJobs() {
     this.mqttHandler.subscribeByDevicePlant();
-    this.mqttHandler.actuatorControlToDevice();
 
     // cron 스케줄 등록
-    new cron.CronJob('*/1 * * * *', () => {
-      console.log(`The time is now ${new Date()}`);
+    new cron.CronJob("*/20 * * * * *", async () => {
+      await this.mqttHandler.actuatorControlToDevice();
     }).start();
   }
 }
