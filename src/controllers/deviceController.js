@@ -3,8 +3,6 @@ const express = require("express");
 
 const router = express.Router();
 
-const MqttHandler = require("../workers/mqtt/mqttWorker");
-const deviceControlDTO = require("../dtos/deviceControlDto");
 const DeviceService = require("../services/deviceService");
 const {ActuatorCommandDTO} = require("../dtos/actuatorDto")
 const ActuatorService = require("../services/actuatorService");

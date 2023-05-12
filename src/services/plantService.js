@@ -7,10 +7,6 @@ class PlantService {
     this.plantRepository = new PlantRepository();
   }
 
-  // findUserByPlantId(id) {
-  //   return this.repository.findById(id);
-  // }
-
   async createPlant(data) {
     const newPlantData = await this.plantRepository.createPlant(data);
     if (newPlantData?.length > 0) {

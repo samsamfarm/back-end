@@ -1,5 +1,4 @@
 const { Repository } = require("./index");
-const { BadRequest } = require("../errors");
 
 class DeviceRepository extends Repository {
   constructor() {

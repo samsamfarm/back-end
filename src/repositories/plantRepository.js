@@ -6,12 +6,6 @@ class PlantRepository extends Repository {
     this.table = "plants";
   }
 
-  // async findById(id) {
-  //   const result = await this.__findByPrimaryKey(this.table, id);
-  //   if (result === undefined) throw new BadRequest("Not Found User");
-  //   return result;
-  // }
-
   createPlant(data) {
     return this.db(this.table).returning("*").insert({
       user_id: data.userId,

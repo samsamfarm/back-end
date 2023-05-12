@@ -1,4 +1,3 @@
-const { BadRequest } = require("../errors");
 const { Repository } = require("./index");
 
 class ActuatorRepository extends Repository {

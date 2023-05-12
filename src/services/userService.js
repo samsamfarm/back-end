@@ -1,7 +1,7 @@
 const { BadRequest, InternalServerError } = require('../errors');
 const UserRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken');
 
 class UserService {
     constructor() {
@@ -56,6 +56,23 @@ class UserService {
         if (userInfo === null) {
             throw new Error("Not Found User");
         }
+
+        
+        // Create JWT
+        const tokenPayload = {
+            id: userInfo.id,
+            email: userInfo.email,
+        };
+
+        const tokenOptions = {
+            algorithm : "HS256",
+            expiresIn : "1m",
+            issuer : "samsamfarm"
+        }
+
+        const accessToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions)
+
+        userInfo.accessToken = accessToken;
 
         return userInfo;
     }
