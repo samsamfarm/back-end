@@ -2,7 +2,7 @@
 
 const express = require("express");
 const UserService = require("../services/userService");
-const { UserDTO, UpdateUserRequestDTO } = require("../dtos/userDto");
+const { UserDTO, UpdateUserRequestDTO, DeleteUserRequestDTO } = require("../dtos/userDto");
 const { InternalServerError } = require("../errors");
 
 module.exports = () => {
@@ -102,16 +102,18 @@ module.exports = () => {
    */
   router.delete("/:id", async (req, res, next) => {
     try {
-        const result = await userService.deleteUser(req.params.id);
-        if(result == 1) {
-            res.json({data: "ok"});
-        }
-        else {
-            throw new InternalServerError("User Delete Failed");
-        }
+      const userId = req.user.id;
+  
+      const {id} = new DeleteUserRequestDTO(userId, req.params);
+  
+      userService.deleteUser(id);
+  
+      // NOTE: https://velog.io/@server30sopt/204-NOCONTENT에-대해-아시나요 
+      res.status(204).end();
     }catch (error) {
         next(error);
     }
   });
+  
   return router;
 };

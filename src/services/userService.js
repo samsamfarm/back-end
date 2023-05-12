@@ -1,4 +1,4 @@
-const { BadRequest, InternalServerError } = require('../errors');
+const { BadRequest, InternalServerError, Unauthorized } = require('../errors');
 const UserRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -8,8 +8,7 @@ class UserService {
         this.repository = new UserRepository();
     }
 
-    async findUserByUserId(id) {
-        await this.validateUserByUserId(id);
+    findUserByUserId(id) {
         return this.repository.findById(id);
     }
 
@@ -35,28 +34,23 @@ class UserService {
         }
     }
 
-    async validateUserByPasswordAndEmail(password, email) {
-        try {
-            const userInfo = await this.repository.findByEmail(email);
-            if (userInfo == null) {
-                throw new BadRequest("Not Found User")
-            };
-    
-            const passwordCheck = bcrypt.compareSync(password, userInfo.password);
-            if(!passwordCheck) {
-                throw new BadRequest("No Matched Password");
-            }
-        } catch (error) {
-            new Error(error);
+    async validateUserByPasswordAndEmail(email, password) {
+        const userInfo = await this.repository.findByEmail(email);
+        if (userInfo == null) {
+            throw new Unauthorized({email: "invalid"});
+        }
+
+        const passwordCheck = bcrypt.compareSync(password, userInfo.password);
+        if(passwordCheck === false) {
+            throw new Unauthorized({email: "invalid"});
         }
     }
 
      async getLoginInfoByUser(user) {
         const userInfo = await this.repository.findByEmail(user.email);
-        if (userInfo === null) {
+        if (userInfo == null) {
             throw new Error("Not Found User");
         }
-
         
         // Create JWT
         const tokenPayload = {
@@ -66,7 +60,7 @@ class UserService {
 
         const tokenOptions = {
             algorithm : "HS256",
-            expiresIn : "1m",
+            expiresIn : "12h",
             issuer : "samsamfarm"
         }
 
@@ -87,8 +81,7 @@ class UserService {
     }
 
     deleteUser(user) {
-        const result = this.repository.deleteUser(user);
-        return result;
+        this.repository.deleteUser(user);
     }
 }
 
