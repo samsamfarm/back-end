@@ -82,8 +82,7 @@ class MqttHandler {
           water_command: actuator.water_command,
           light_command: actuator.light_command,
         };
-        //actuator/control
-        this.publish(`actuator/${actuator.device_id}/control`, message);
+        this.publish(`actuator/control`, message);
       });
     } catch (error) {
       console.log("16df8ddb-5e40-4a0b-b4c0-54edfadb213e", error);
