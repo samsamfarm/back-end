@@ -146,13 +146,12 @@ class CreateUserRequestDTO {
             throw new BadRequest({mbti: 'invited'});
         }
 
-
-        this.email = data.email;
-        this.password = bcrypt.hashSync(data.password, 10);
-        this.name = data.name;
-        this.nickname = data.nickname;
-        this.mbti = data.mbti;
-        this.phone = data.phone;
+        this.email = requestData.email;
+        this.password = bcrypt.hashSync(requestData.password, 10);
+        this.name = requestData.name;
+        this.nickname = requestData.nickname;
+        this.mbti = requestData.mbti;
+        this.phone = requestData.phone;
     }
 }
 
