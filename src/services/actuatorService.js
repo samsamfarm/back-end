@@ -1,5 +1,3 @@
-const { BadRequest, InternalServerError } = require("../errors");
-
 const ActuatorRepository = require("../repositories/actuatorRepository");
 
 class ActuatorService {

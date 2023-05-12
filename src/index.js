@@ -32,10 +32,6 @@ class App {
   }
 
   registerRoutes() {
-    // Routes 등록
-    // this.app.use("/api/users", usersRouter);
-    // this.app.use("/posts", postsRouter);
-
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
     this.app.use("/api/v1/article",require("./controllers/article/articleController"));
     this.app.use("/api/v1/auth", require("./controllers/authController"));

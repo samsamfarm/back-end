@@ -30,6 +30,4 @@ function checkMissingParamsBoolean(data, requiredKeys) {
   return missingValues;
 }
 
-
-
 module.exports = { checkMissingParams, checkMissingParamsBoolean };
