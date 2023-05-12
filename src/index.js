@@ -15,7 +15,7 @@ const {
   InternalServerError,
   NotFound,
 } = require("./errors");
-const { VerifyToken } = require("./middlewares");
+const { verifyToken } = require("./middlewares");
 
 class App {
   constructor() {
@@ -50,7 +50,7 @@ class App {
     );
     this.app.use(
       "/api/v1/user",
-      VerifyToken,
+      verifyToken,
       require("./controllers/userController")
     );
   }

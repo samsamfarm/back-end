@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { Unauthorized } = require('../errors');
 
-module.exports = VerifyToken = (req, res, next) => {
+module.exports = verifyToken = (req, res, next) => {
     try {
         const [bearer, token] = req.headers?.authorization?.split(' ');
 
