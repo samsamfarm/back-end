@@ -40,9 +40,9 @@ const router = express.Router();
 router.post("/", async (req, res, next) => {
   try {
     const { data } = new CreatePlantRequestDTO(req.body);
-
-    await plantService.createPlant(data);
-
+    console.log(data);
+  const np = await plantService.createPlant(data);
+    console.log(np);
     res.json({ data: "ok" });
   } catch (err) {
     next(err);

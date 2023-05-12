@@ -69,7 +69,7 @@ exports.up = function(knex) {
         table.string("password", 60).notNullable(); // 60 is bcrypt encoded password length
         table.string("mbti", 4).notNullable();
         table.string("phone", 15).notNullable();
-        table.datetime("created_at");
+        table.datetime("created_at").defaultTo(knex.fn.now());
         table.datetime("updated_at");
         table.datetime("deleted_at");
         table.unique("email");

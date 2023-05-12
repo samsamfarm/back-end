@@ -53,11 +53,19 @@ class MqttHandler {
         "light_command",
         "device_id"
       );
+
+      // 자료구조를 이용해서 중복돠는 device_id를 제거
+      const deviceidsMap = new Map();
       actuators.forEach((actuator) => {
+        deviceidsMap.set(actuator.device_id, actuator);
+      });
+
+      deviceidsMap.forEach((actuator) => {
         const message = {
           wind_command: actuator.wind_command,
           water_command: actuator.water_command,
           light_command: actuator.light_command,
+          device_id: actuator.device_id,
         };
         this.client.publish("actuator/control", JSON.stringify(message));
       });

@@ -46,7 +46,7 @@ class CreateDeviceLogDto {
     message;
 
     constructor(requestData) {
-        const requireData = [device_id, temperature, humid, moisture, bright];
+        const requireData = ['device_id', 'temperature', 'humid', 'moisture', 'bright'];
         const errorMessage = checkMissingParams(requestData, requireData)
         
         if (errorMessage) {

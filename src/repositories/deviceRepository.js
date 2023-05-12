@@ -6,8 +6,12 @@ class DeviceRepository extends Repository {
     this.table = "devices"
   }
  
-  async createDevice(deviceId, userId) {
-    return this.db(this.table).returning('*').insert({ user_id: userId, id: deviceId });
+  createDevice(deviceId, userId) {
+    return this.db(this.table).insert({ user_id: userId, id: deviceId });
+  }
+
+  getDeviceByUserId(userId) {
+    return this.db(this.table).where({ user_id: userId }).first();
   }
 
   getDeviceById(deviceId) {
@@ -19,7 +23,6 @@ class DeviceRepository extends Repository {
     return this.db(this.table).select().orderBy('created_at', 'asc');
   }
   
-
 }
 
 
