@@ -68,7 +68,7 @@ router.post("/", async (req, res, next) => {
   try {
     // DTO 생략(확정된 내용이 없음)
     const { device_id: deviceId } = req.body;
-    const userId = req?.session?.user_id || 2;
+    const userId = req.user.id;
 
     await deviceService.validateDeviceId(deviceId);
 
@@ -82,7 +82,7 @@ router.post("/", async (req, res, next) => {
 
 router.get("/control", async (req, res, next) => {
   try {
-    const userId = req?.user?.id || 1;
+    const userId = req.user.id;
 
     const data = await actuatorService.getActuatorsByUserId(userId);
 
@@ -96,7 +96,7 @@ router.get("/control", async (req, res, next) => {
 // TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행 //true, false값만 보내줌
 router.post("/control", async (req, res, next) => {
   try {
-    const userId = req?.user?.id || 1;
+    const userId = req.user.id;
 
     const { data } = new ActuatorCommandDTO(req.body);
     

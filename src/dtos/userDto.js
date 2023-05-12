@@ -53,7 +53,6 @@ const { BadRequest, Forbidden } = require("../errors");
  *         deleted_at: '2023-05-05T15:35:37.000Z'
  */
 class UserDTO {
-    id;
     email;
     name;
     nickname;
@@ -61,11 +60,9 @@ class UserDTO {
     phone;
     created_at;
     updated_at;
-    dleeted_at;
 
     constructor(data)
     {
-        this.id = data.id;
         this.email = data.email;
         this.mbti = data.mbti;
         this.name = data.name;
@@ -73,7 +70,6 @@ class UserDTO {
         this.phone = data.phone;
         this.created_at = data.created_at;
         this.updated_at = data.updated_at;
-        this.deleted_at = data.deleted_at;
     }
 }
 
@@ -146,13 +142,12 @@ class CreateUserRequestDTO {
             throw new BadRequest({mbti: 'invited'});
         }
 
-
-        this.email = data.email;
-        this.password = bcrypt.hashSync(data.password, 10);
-        this.name = data.name;
-        this.nickname = data.nickname;
-        this.mbti = data.mbti;
-        this.phone = data.phone;
+        this.email = requestData.email;
+        this.password = bcrypt.hashSync(requestData.password, 10);
+        this.name = requestData.name;
+        this.nickname = requestData.nickname;
+        this.mbti = requestData.mbti;
+        this.phone = requestData.phone;
     }
 }
 
