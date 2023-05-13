@@ -7,7 +7,7 @@ class ActuatorRepository extends Repository {
   }
 
   async updateActuatorCommandToDB(data) {
-    return this.db(this.table).returning("*").update({
+    return this.db(this.table).update({
       wind_command: data.windCommand,
       water_command: data.waterCommand,
       light_command: data.lightCommand

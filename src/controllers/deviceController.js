@@ -70,7 +70,7 @@ router.post("/", async (req, res, next) => {
     const { device_id: deviceId } = req.body;
     const userId = req.user.id;
 
-    await deviceService.validateDeviceId(deviceId);
+    await deviceService.validateDeviceId(deviceId); 
 
     await deviceService.createDevice(deviceId, userId);
 
