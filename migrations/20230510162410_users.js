@@ -48,17 +48,6 @@
  *           type: string
  *           format: date
  *           description: 유저 정보가 삭제된 날짜입니다.
- *       example:
- *         id: 4
- *         email: 5
- *         name: 온호성
- *         nickname: 핸섬호성
- *         password: thisispassword
- *         mbti: ENFP
- *         phone: 01012343214
- *         createdAt: 2023-05-03 20:24:43
- *         updated_at: 2023-05-04 20:24:43
- *         deleted_at:  2023-05-05 20:24:43
  */
 exports.up = function(knex) {
     return knex.schema.createTable("users", (table) => {

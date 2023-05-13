@@ -37,6 +37,11 @@ const options = {
       },
     ],
   },
+  security: [
+    {
+      BearerAuth: [], // BearerAuth 보안 정의를 사용할 수 있도록 추가
+    },
+  ],
   apis: [
     "./src/controllers/*.js",
     "./src/services/*.js",
