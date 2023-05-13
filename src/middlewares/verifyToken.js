@@ -3,8 +3,16 @@ const { Unauthorized } = require("../errors");
 
 module.exports = verifyToken = (req, res, next) => {
   try {
-    const [bearer, token] = req.headers?.authorization?.split(" ");
-    if (bearer !== "Bearer") {
+    const headers = req.headers; 
+    const authorization = headers?.authorization || headers?.Authorization || headers.AUTHORIZATION;
+    if (authorization == null) {
+      throw new Unauthorized({ token: "invalid_credentials" });
+    }
+
+    const [bearer, token] = authorization?.split(" ");
+
+    const bearerList = ['Bearer', 'bearer', 'BEARER'];
+    if (bearerList.include(bearer) === false) {
       throw new Unauthorized({ token: "invalid_credentials" });
     }
 
