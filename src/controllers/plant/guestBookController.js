@@ -6,7 +6,7 @@ module.exports = (connection) => {
    * @swagger
    * /api/v1/plant/guest-book:
    *   post:
-   *     summary: 새로운 방명록 작성
+   *     summary: 새로운 방명록 작성(미구현)
    *     tags: [plant]
    *     requestBody:
    *       required: true
@@ -49,7 +49,7 @@ module.exports = (connection) => {
    * @swagger
    * /api/v1/plant/guest-book:
    *   get:
-   *     summary: 방명록 불러오기
+   *     summary: 방명록 불러오기(미구현)
    *     tags: [plant]
    *     requestBody:
    *       required: true
@@ -79,7 +79,7 @@ module.exports = (connection) => {
    * @swagger
    * /api/v1/plant/guest-book:
    *   patch:
-   *     summary: 방명록 수정
+   *     summary: 방명록 수정(미구현)
    *     tags: [plant]
    *     requestBody:
    *       required: true
@@ -122,7 +122,7 @@ module.exports = (connection) => {
    * @swagger
    * /api/v1/plant/guest-book:
    *   delete:
-   *     summary: 방명록 불러오기
+   *     summary: 방명록 불러오기(미구현)
    *     tags: [plant]
    *     requestBody:
    *       required: true
