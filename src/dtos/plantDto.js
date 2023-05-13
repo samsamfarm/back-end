@@ -1,5 +1,5 @@
 const { BadRequest } = require("../errors");
-const checkMissingParams = require("../utils/validation")
+const {checkMissingParams} = require("../utils/validation")
 /**
  * @swagger
  * components:
