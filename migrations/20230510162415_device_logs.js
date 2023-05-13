@@ -5,14 +5,18 @@
  *     device_logs:
  *       type: object
  *       required:
+ *         - device_id
  *         - temperature
  *         - humid
  *         - moisture
  *         - bright
  *       properties:
- *         plant_id:
+ *         id: 
  *           type: int
- *           description: 해당 측정 로그를 발생시키는 디바이스의 고유id 입니다.
+ *           description: 디바이스 로그의 id 입니다
+ *         device_id:
+ *           type: int
+ *           description: 디바이스 로그를 발생시키시는 디바이스 id입니다.
  *         temperature:
  *           type: number
  *           description: 온도 측정 로그 입니다.
@@ -31,13 +35,6 @@
  *           type: string
  *           format: date
  *           description: 한번의 디바이스 로그가 측정된 시간 입니다.
- *       example:
- *         plant_id: 4
- *         temperature: 35.5
- *         humid: 59.2
- *         moisture: 78.3
- *         bright: 1200
- *         created_at:  2023-05-05 20:24:43
  */
 exports.up = function(knex) {
     return knex.schema.createTable("device_logs", (table) => {

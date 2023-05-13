@@ -5,21 +5,27 @@
  *     actuators:
  *       type: object
  *       required:
- *         - is_success
+ *         - device_id
  *       properties:
  *         id:
  *           type: number
  *           description: 엑츄에이터 고유id 입니다.
  *         device_id:
  *           type: number
- *           description: 해당 엑츄에이터 제어를 실행시키는 디바이스의 고유id 입니다.
+ *           description: 해당 엑츄에이터 제어가 실행되는 디바이스의 고유id 입니다.
  *         wind_command:
- *           type: enum
- *           description: 엑츄에이터 제어 성공 여부 입니다.
+ *           type: boolean
+ *           description: 바람 공급 가동여부에 대한 데이터 입니다.
+ *         water_command:
+ *           type: boolean
+ *           description: 물 공급 가동여부에 대한 데이터 입니다.
+ *         light_command:
+ *           type: boolean
+ *           description: led 제어 가동여부에 대한 데이터 입니다
  *         created_at:
  *           type: string
  *           format: date
- *           description: 한번의 엑츄에이터 제어가 실행된 시간입니다.
+ *           description: 디바이스에 엑츄에이터 제어가 최초 설정된 시간입니다.
  */
 exports.up = function(knex) {
     return knex.schema.createTable("actuators", (table) => {

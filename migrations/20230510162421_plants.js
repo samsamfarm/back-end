@@ -5,7 +5,7 @@
  *     plants:
  *       type: object
  *       required:
- *         - current_grade
+ *         - user_id
  *         - plant_type
  *       properties:
  *         id:
@@ -28,10 +28,10 @@
  *           type: string
  *           format: date
  *           description: 작물이 생성된 날짜 입니다.
- *         plant_grade_update_time:
+ *         updated_at:
  *           type: string
  *           format: date
- *           description: 작물 성장단계가 업데이트 된 날짜 입니다.
+ *           description: 작물이 업데이트된 날짜 입니다.
  *         deleted_at:
  *           type: string
  *           format: date
