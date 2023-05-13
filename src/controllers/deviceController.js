@@ -14,23 +14,35 @@ const actuatorService = new ActuatorService()
  * @swagger
  * /api/v1/device:
  *   get:
- *     summary: 전체 디바이스 목록 조회
+ *     summary: 모든 디바이스 목록 조회
  *     tags: [device]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/devices'
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: 디바이스 생성 완료.
+ *         description: 전체 디바이스 조회 성공.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/devices'
- *       404:
- *         $ref: '#/components/responses/NotFound'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                       user_id:
+ *                         type: number
+ *                       created_at:
+ *                         type: string
+ *                       updated_at:
+ *                         type: string
+ *                       deleted_at:
+ *                         type: string
+ *       400:
+ *         description: BAD_REQUEST.
  */
 router.get("/", async (req, res, next) => {
   try {
@@ -46,23 +58,31 @@ router.get("/", async (req, res, next) => {
  * @swagger
  * /api/v1/device:
  *   post:
- *     summary: 새로운 디바이스 생성(새로운 회원에게 배정)
+ *     summary: 디바이스 생성
  *     tags: [device]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/devices'
+ *             type: object
+ *             properties:
+ *               id:
+ *                type: number
  *     responses:
  *       200:
- *         description: 디바이스 생성 완료.
+ *         description: 디바이스 생성 성공.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/devices'
- *       404:
- *         $ref: '#/components/responses/NotFound'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: ok
+ *       400:
+ *         description: BAD_REQUEST.
  */
 router.post("/", async (req, res, next) => {
   try {
@@ -80,6 +100,40 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/v1/device/control:
+ *   get:
+ *     summary: 액츄에이터 제어 명령 조회(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
+ *     tags: [device]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 액츄에이터 제어 명령 조회 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     device_id:
+ *                       type: number
+ *                     wind_command:
+ *                       type: boolean
+ *                     water_command:
+ *                       type: boolean
+ *                     light_command:
+ *                       type: boolean
+ *                     id:
+ *                       type: number
+ *       400:
+ *         description: BAD_REQUEST.
+ */
+
+
 router.get("/control", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -92,8 +146,42 @@ router.get("/control", async (req, res, next) => {
   }
 });
 
-// NOTE: 엑츄에이터 제어 명령
-// TODO: 프론트에게 데이터를 받는다(post) => body로 데이터가 담겨져 오면 => publish로 디바이스에게 발행 //true, false값만 보내줌
+/**
+ * @swagger
+ * /api/v1/device/control:
+ *   post:
+ *     summary: 액츄에이터 제어 명령(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
+ *     tags: [device]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               device_id:
+ *                type: number
+ *               wind_command:
+ *                type: boolean
+ *               water_command:
+ *                type: boolean
+ *               light_command:
+ *                type: boolean   
+ *     responses:
+ *       200:
+ *         description: 액츄에이터 제어 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: ok
+ *       400:
+ *         description: BAD_REQUEST.
+ */
 router.post("/control", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -116,32 +204,42 @@ router.post("/control", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/device/:id:
+ * /api/v1/device/{device_id}:
  *   get:
- *     summary: 특정 디바이스 조회
+ *     summary: 디바이스 조회
  *     tags: [device]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/devices'
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
- *       - name: device_order
- *         in: query
- *         required: true
- *         description: 디바이스 목록조회를 위한 디바이스의 번호
+ *       - in: path
+ *         name: device_id
  *         schema:
- *           type: string
+ *           type: number
+ *         required: true
+ *         description: 디바이스 ID
  *     responses:
  *       200:
- *         description: 특정 디바이스 조회 완료.
+ *         description: 디바이스 조회 성공.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/devices'
- *       404:
- *         $ref: '#/components/responses/NotFound'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: number
+ *                     user_id:
+ *                       type: number
+ *                     created_at:
+ *                       type: string
+ *                     updated_at:
+ *                       type: string
+ *                     deleted_at:
+ *                       type: string
+ *       400:
+ *         description: BAD_REQUEST.
  */
 router.get("/:id", async (req, res, next) => {
   try {
@@ -159,8 +257,45 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-// NOTE: 디바이스 로그의 데이터 보내주기
-// TODO: 프론트가 get요청하면 => select * limit 1로 보내줌
+/**
+ * @swagger
+ * /api/v1/device/plant-data/{device_id}:
+ *   get:
+ *     summary: 가장 최근 센서 데이터 조회
+ *     tags: [device]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: device_id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: 디바이스 ID
+ *     responses:
+ *       200:
+ *         description: 센서 데이터 조회 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: number
+ *                     temperature:
+ *                       type: number
+ *                     humid:
+ *                       type: number
+ *                     moisture:
+ *                       type: number
+ *                     bright:
+ *                       type: number
+ *       400:
+ *         description: BAD_REQUEST.
+ */
 router.get("/plant-data/:device_id", async (req, res, next) => {
   try {
     const deviceId = req.params.device_id;

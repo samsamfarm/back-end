@@ -12,6 +12,44 @@ const {
 const userService = new UserService();
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/user:
+ *   get:
+ *     summary: 내 정보 조회(내꺼)
+ *     tags: [user]
+ *     security:
+ *       - BearerAuth: [] 
+ *     responses:
+ *       200:
+ *         description: 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       email:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       nickname:
+ *                         type: string
+ *                       mbti:
+ *                         type: string
+ *                       phone:
+ *                         type: string
+ *                       created_at:
+ *                         type: string
+ *                       updated_at:
+ *                         type: string
+ *       400:
+ *         description: BAD_REQUEST.
+ */
 router.get("/", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -30,28 +68,48 @@ router.get("/", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/user/{id}:
+ * /api/v1/user/:id:
  *   get:
- *     summary: 유저 정보를 ID 기반으로 반환
+ *     summary: 유저 정보 조회 (다른 사람 꺼) (이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
  *     tags: [user]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: 유저 ID
- *         required: true
+ *       - in: path
+ *         name: id
  *         schema:
- *           $ref: "#/components/schemas/users/properties/id"
+ *           type: number
+ *         required: true
+ *         description: ID  
  *     responses:
  *       200:
  *         description: 성공.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/dtos/UserDTO'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       email:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       nickname:
+ *                         type: string
+ *                       mbti:
+ *                         type: string
+ *                       phone:
+ *                         type: string
+ *                       created_at:
+ *                         type: string
+ *                       updated_at:
+ *                         type: string
  *       400:
- *         description: Invalid User Id.
- *       500:
- *         description: Server Error.
+ *         description: BAD_REQUEST.
  */
 router.get("/:id", async (req, res, next) => {
   try {
@@ -71,29 +129,55 @@ router.get("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/user/{id}:
+ * /api/v1/device/control:
  *   put:
- *     summary: 유저 정보를 ID 기반으로 수정
+ *     summary: 유저 정보 수정  (내꺼만 수정)
  *     tags: [user]
- *     parameters:
- *       - $ref: '#/components/dtos/UpdateUserRequestDTO/parameters/pathParam'
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
- *       $ref: '#/components/dtos/UpdateUserRequestDTO/requestBody'
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                type: string
+ *               phone:
+ *                type: string
+ *               name:
+ *                type: string
+ *               nickname:
+ *                type: string   
  *     responses:
  *       200:
- *         description: 성공.
+ *         description: 수정 성공.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/dtos/UserDTO'
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     nickname:
+ *                       type: string
+ *                     mbti:
+ *                       type: string
+ *                     phone:
+ *                       type: string
+ *                     created_at:
+ *                       type: string
+ *                     updated_at:
+ *                       type: string
  *       400:
- *         description: Invalid User Id.
- *       500:
- *         description: Server Error.
- *
+ *         description: BAD_REQUEST.
  */
-
-
 router.put("/:id", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -117,24 +201,26 @@ router.put("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/user/{id}:
+ * /api/v1/user/:id:
  *   delete:
- *     summary: 유저 정보를 ID 기반으로 반환
+ *     summary: 유저 정보 삭제 (내것만 삭제)
  *     tags: [user]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: 유저 ID
- *         required: true
+ *       - in: path
+ *         name: id
  *         schema:
- *           $ref: "#/components/schemas/users/properties/id"
+ *           type: number
+ *         required: true
+ *         description: ID  
  *     responses:
- *       200:
+ *       204:
  *         description: 성공.
+ *         content:
+ *           application/json:
  *       400:
- *         description: Invalid User Id.
- *       500:
- *         description: Server Error.
+ *         description: BAD_REQUEST.
  */
 router.delete("/:id", async (req, res, next) => {
   try {

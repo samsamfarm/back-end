@@ -2,9 +2,18 @@ const express = require('express');
 const UserService = require('../services/userService');
 const { CreateUserRequestDTO, UserDTO, LoginUserRequestDTO, LoginUserResponseDTO } = require('../dtos/userDto');
 
-
 const router = express.Router();
 const userService = new UserService();
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
 /**
  * @swagger
@@ -13,19 +22,52 @@ const userService = new UserService();
  *     summary: 유저 회원가입
  *     tags: [auth]
  *     requestBody:
- *       $ref: '#/components/dtos/CreateUserRequestDTO/requestBody'
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               name:
+ *                 type: string
+ *               nickname:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               password_confirm:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               mbti:
+ *                 type: string
  *     responses:
  *       200:
  *         description: 회원가입 완료.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/dtos/UserDTO'
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                 name:
+ *                   type: string
+ *                 nickname:
+ *                   type: string
+ *                 mbti:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 created_at:
+ *                   type: string
+ *                 updated_at:
+ *                   type: string
  *       400:
- *         description: Invalid Sign-up.
- *       500:
- *         description: Server Error.
- *
+ *         description: BAD_REQUEST.
  */
 router.post('/sign-up', async (req, res, next) => {
   try {
@@ -48,19 +90,34 @@ router.post('/sign-up', async (req, res, next) => {
  *     summary: 유저 로그인
  *     tags: [auth]
  *     requestBody:
- *       $ref: '#/components/dtos/LoginUserRequestDTO/requestBody'
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
- *         description: 로그인 성공.
+ *         description: 회원가입 완료.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/dtos/LoginUserResponseDTO'
+ *               type: object
+ *               properties:
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                 name:
+ *                   type: string
+ *                 accessToken:
+ *                   type: string
  *       400:
- *         description: Invalid Sign-in.
- *       500:
- *         description: Server Error.
- *
+ *         description: BAD_REQUEST.
  */
 router.post('/sign-in', async (req, res, next) => {
   try {
