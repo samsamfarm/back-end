@@ -7,7 +7,7 @@ class PlantRepository extends Repository {
   }
 
   createPlant(data) {
-    return this.db(this.table).returning("*").insert({
+    return this.db(this.table).insert({
       user_id: data.userId,
       device_id: data.deviceId,
       plant_type: data.plantType,

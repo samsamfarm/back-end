@@ -33,7 +33,7 @@ class App {
     // Middlewares 등록
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
-    this.app.use(cors({ origin: "http://localhost:5000" }));
+    this.app.use(cors());
   }
 
   registerRoutes() {
