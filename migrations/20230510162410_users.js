@@ -31,7 +31,7 @@
  *           description: 유저의 비밀번호입니다.
  *         mbti:
  *           type: string
- *           enum: ['ISTJ','ISFJ','INFJ','INTJ','ISTP','ISFP','INFP','INTP','ESTP','ESFP','ENFP','ENTP','ESTJ','ESFJ','ENFJ','ENTJ']
+ *           enum: string
  *           description: mbti 16종류입니다.
  *         phone:
  *           type: string

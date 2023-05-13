@@ -5,8 +5,12 @@
  *     plant_grade_logs:
  *       type: object
  *       required:
+ *         - plant_id
  *         - current_grade
  *       properties:
+ *         plant_id:
+ *           type: number
+ *           description: 작물 성장 로그의 대상이 되는 작물의 고유 id입니다.
  *         current_grade:
  *           type: string
  *           enum: ['1', '2', '3', '4']
@@ -17,14 +21,6 @@
  *         last_grade_arrive_date:
  *           type: number
  *           description: 작물이 마지막 단계에 도달한 시간입니다.
- *         plant_id:
- *           type: number
- *           description: 작물 성장 로그의 대상이 되는 작물의 고유 id입니다.
- *       example:
- *         current_grade: 2
- *         current_grade_arrive_date: 2023-05-03 20:24:43
- *         last_grade_arrive_date: 2023-05-04 20:24:43
- *         plant_id: 3
  */
 exports.up = function(knex) {
   return knex.schema.createTable("plant_grade_logs", (table) => {

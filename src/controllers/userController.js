@@ -92,17 +92,7 @@ router.get("/:id", async (req, res, next) => {
  *         description: Server Error.
  *
  */
-router.put("/:id", async (req, res, next) => {
-  try {
-    const user = new UpdateUserRequestDTO(req.params.id, req.body);
 
-    const result = new UserDTO(resutl);
-
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
-});
 
 router.put("/:id", async (req, res, next) => {
   try {
