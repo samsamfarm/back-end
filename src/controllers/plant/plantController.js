@@ -15,7 +15,7 @@ const router = express.Router();
  *     summary: 모든 작물 목록 조회(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
  *     tags: [plant]
  *     security:
- *       - BearerAuth: [] 
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: 전체 작물 조회 성공.
@@ -31,23 +31,32 @@ const router = express.Router();
  *                     properties:
  *                       id:
  *                         type: number
+ *                         example: 1
  *                       user_id:
  *                         type: number
+ *                         example: 123
  *                       device_id:
  *                         type: number
+ *                         example: 456
  *                       plant_type:
  *                         type: number
+ *                         example: 2
  *                       current_grade:
  *                         type: string
+ *                         example: "A"
  *                       plant_grade_update_time:
  *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
  *                       created_at:
  *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
  *                       deleted_at:
  *                         type: string
+ *                         example: null
  *       400:
  *         description: BAD_REQUEST.
  */
+
 router.get("/", async (req, res, next) => {
   try {
     const allPlants = await plantService.getAllPlant();
@@ -59,9 +68,9 @@ router.get("/", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/device:
+ * /api/v1/plant:
  *   post:
- *     summary: 작물 생성(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
+ *     summary: 작물 생성
  *     tags: [plant]
  *     security:
  *       - BearerAuth: []
@@ -74,10 +83,13 @@ router.get("/", async (req, res, next) => {
  *             properties:
  *               user_id:
  *                type: number
+ *                example: 123
  *               device_id:
  *                type: number
+ *                example: 456
  *               plant_type:
  *                type: string  
+ *                example: "Aloe Vera"
  *     responses:
  *       200:
  *         description: 작물 생성 성공.
@@ -87,7 +99,7 @@ router.get("/", async (req, res, next) => {
  *               type: object
  *               properties:
  *                 data:
- *                   type: ok
+ *                   example: ok
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -118,6 +130,7 @@ router.post("/", async (req, res, next) => {
  *           type: number
  *         required: true
  *         description: 유저 ID  
+ *         example: 12
  *     responses:
  *       200:
  *         description: 유저의 작물조회 성공.
@@ -133,20 +146,28 @@ router.post("/", async (req, res, next) => {
  *                     properties:
  *                       id:
  *                         type: number
+ *                         example: 1
  *                       user_id:
  *                         type: number
+ *                         example: 12
  *                       device_id:
  *                         type: number
+ *                         example: 456
  *                       plant_type:
- *                         type: number
+ *                         type: string
+ *                         example: "Aloe Vera"
  *                       current_grade:
  *                         type: string
+ *                         example: "Good"
  *                       plant_grade_update_time:
  *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
  *                       created_at:
  *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
  *                       deleted_at:
  *                         type: string
+ *                         example: null
  *       400:
  *         description: BAD_REQUEST.
  */
