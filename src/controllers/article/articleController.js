@@ -10,27 +10,65 @@ const articeService = new ArticeService();
 const commentService = new CommentService();
   
 /**
-   * @swagger
-   * /api/v1/article:
-   *   get:
-   *     summary: 전체 게시물을 불러오는 api 입니다
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/articles'
-   *     responses:
-   *       200:
-   *         description: 게시물 조회 완료.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/articles'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
+ * @swagger
+ * /api/v1/article:
+ *   get:
+ *     summary: 모든 게시물 조회
+ *     tags:
+ *       - article
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 모든 게시물 조회 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                       user_id:
+ *                         type: number
+ *                       title:
+ *                         type: string
+ *                       content:
+ *                         type: string
+ *                       view_count:
+ *                         type: number
+ *                       created_at:
+ *                         type: string
+ *                       updated_at:
+ *                         type: string
+ *                       deleted_at:
+ *                         type: string
+ *             example:
+ *               data:
+ *                 - id: 1
+ *                   user_id: 123
+ *                   title: "게시물 제목"
+ *                   content: "게시물 내용"
+ *                   view_count: 100
+ *                   created_at: "2023-05-14T12:34:56Z"
+ *                   updated_at: "2023-05-14T13:45:00Z"
+ *                   deleted_at: null
+ *                 - id: 2
+ *                   user_id: 456
+ *                   title: "다른 게시물 제목"
+ *                   content: "다른 게시물 내용"
+ *                   view_count: 50
+ *                   created_at: "2023-05-13T09:12:34Z"
+ *                   updated_at: "2023-05-13T11:23:45Z"
+ *                   deleted_at: null
+ *       400:
+ *         description: BAD_REQUEST.
+ */
+
   router.get("/", (req, res, next) => {
     try {
       const allArticle = articeService.getAllArticle();
@@ -40,29 +78,45 @@ const commentService = new CommentService();
     }
   });
 
-  /**
-   * @swagger
-   * /api/v1/article:
-   *   post:
-   *     summary: 새로운 게시물 작성
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/articles'
-   *     responses:
-   *       200:
-   *         description: 새로운 개시물 작성 완료.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/articles'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  //TODO: 게시글 생성하고, 
+/**
+ * @swagger
+ * /api/v1/article:
+ *   post:
+ *     summary: 게시물 생성
+ *     tags:
+ *       - article
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: number
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *           example:
+ *             user_id: 123
+ *             title: "새로운 게시물"
+ *             content: "게시물 내용"
+ *     responses:
+ *       200:
+ *         description: 게시물 생성 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   example: ok
+ *       400:
+ *         description: BAD_REQUEST.
+ */
   router.post("/", async (req, res, next) => {
     try {
        const { user_id, title, content } = req.body; 
@@ -74,36 +128,55 @@ const commentService = new CommentService();
     }
   });
 
-  /**
-   * @swagger
-   * /api/v1/article/:article-id:
-   *   get:
-   *     summary: 해당 게시물 id의 게시물과 댓글 불러오기
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/article_with_commets'
-   *     parameters:
-   *       - name: article-id
-   *         in: query
-   *         required: true
-   *         description: 게시물의 id
-   *         schema:
-   *           type: number
-   *     responses:
-   *       200:
-   *         description: Success.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/article_with_commets'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  // 게시물 하나씩
+/**
+ * @swagger
+ * /api/v1/article/{article-id}:
+ *   get:
+ *     summary: 게시물 id 기준으로 해당 게시물과, 댓글 조회
+ *     tags: [article]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: article_id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: 게시물 ID
+ *     responses:
+ *       200:
+ *         description: 게시물 데이터, 댓글 조회 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     article_created_at:
+ *                       type: string
+ *                     view_count:
+ *                       type: number
+ *                     comment:
+ *                       type: string
+ *                     comment_created_at:
+ *                       type: string
+ *             example:
+ *               data:
+ *                 title: "게시물 제목"
+ *                 content: "게시물 내용"
+ *                 article_created_at: "2023-05-14T12:34:56Z"
+ *                 view_count: 100
+ *                 comment: "댓글 내용"
+ *                 comment_created_at: "2023-05-15T09:12:34Z"
+ *       400:
+ *         description: BAD_REQUEST.
+ */
   router.get("/:article-id", (req, res, next) => {
     try {
       const {articleId} = req.body;
@@ -116,36 +189,42 @@ const commentService = new CommentService();
     }
     
   });
-  /**
-   * @swagger
-   * /api/v1/article/:article-id:
-   *   patch:
-   *     summary: 특정 게시물 수정
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/articles'
-   *     parameters:
-   *       - name: article-id
-   *         in: query
-   *         required: true
-   *         description: 게시물의 id
-   *         schema:
-   *           type: number
-   *     responses:
-   *       200:
-   *         description: Success.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/articles'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  //수정
+
+/**
+ * @swagger
+ * /api/v1/article/{article-id}:
+ *   patch:
+ *     summary: 게시물 수정
+ *     tags: [article]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *           example:
+ *             title: "수정된 제목"
+ *             content: "수정된 내용"
+ *     responses:
+ *       200:
+ *         description: 게시물 수정 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   example: ok
+ *       400:
+ *         description: BAD_REQUEST.
+ */
   router.patch("/:article-id", (req, res, next) => {
     try {
       const { articleId } = req.params; 
@@ -160,37 +239,30 @@ const commentService = new CommentService();
       next(err);
     }
   });
-  // 게시물 삭제
-  /**
-   * @swagger
-   * /api/v1/article/:article-id:
-   *   delete:
-   *     summary: 특정 게시물 삭제
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/articles'
-   *     parameters:
-   *       - name: article-id
-   *         in: query
-   *         required: true
-   *         description: 게시물의 id
-   *         schema:
-   *           type: number
-   *     responses:
-   *       200:
-   *         description: Success.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/articles'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  //삭제
+
+/**
+ * @swagger
+ * /api/v1/article/{article-id}:
+ *   delete:
+ *     summary: 게시물 삭제
+ *     tags: [article]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: article_id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: 게시물 ID  
+ *     responses:
+ *       204:
+ *         description: 성공.
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: BAD_REQUEST.
+ */
   router.delete("/:article-id", (req, res, next) => {
     try {
       const { articleId } = req.params;
@@ -201,7 +273,44 @@ const commentService = new CommentService();
     }
   });
 
-// 댓글 추가
+/**
+ * @swagger
+ * /api/v1/article/comment:
+ *   post:
+ *     summary: 댓글 생성
+ *     tags: [article]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: number
+ *               article_id:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *           example:
+ *             user_id: 123
+ *             article_id: "abcd1234"
+ *             content: "댓글 내용"
+ *     responses:
+ *       200:
+ *         description: 댓글 생성 성공.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   example: ok 
+ *       400:
+ *         description: BAD_REQUEST.
+ */ 
   router.post("/comment", (req, res, next) => {
     try {
       const { user_id, article_id, content } = req.body; 
@@ -210,10 +319,32 @@ const commentService = new CommentService();
       res.json({ data: newComment });
     } catch(err) {
       next(err);
-    }``
+    }
   })
-//댓글 삭제
 
+/**
+ * @swagger
+ * /api/v1/comment/:comment-id:
+ *   delete:
+ *     summary: 댓글 삭제
+ *     tags: [article]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: comment-id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: 댓글 ID  
+ *     responses:
+ *       204:
+ *         description: 성공.
+ *         content:
+ *           application/json:
+ *       400:
+ *         description: BAD_REQUEST.
+ */
   router.delete("/comment/:comment-id", (req, res, next) => {
     try {
       const { commentId } = req.params;
