@@ -23,5 +23,5 @@ client.on("connect", () => {
     let message = JSON.stringify(info);
     console.log("publishing", message);
     client.publish("device/plant", message);
-  }, 1000);
+  }, 10000);
 });
