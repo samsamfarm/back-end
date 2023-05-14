@@ -36,6 +36,7 @@ class App {
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cors());
     this.app.use(morgan("combined"));
+    this.app.set("trust proxy", "127.0.0.1");
   }
 
   registerRoutes() {

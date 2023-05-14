@@ -55,7 +55,7 @@ class UserService {
         if (userInfo == null) {
             throw new Error("Not Found User");
         }
-        
+
         // Create JWT
         const tokenPayload = {
             id: userInfo.id,
