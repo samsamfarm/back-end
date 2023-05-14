@@ -1,4 +1,4 @@
-const { BadRequest, InternalServerError } = require("../errors");
+const { BadRequest, InternalServerError, Forbidden } = require("../errors");
 
 const ActuatorRepository = require("../repositories/actuatorRepository");
 const DeviceRepository = require("../repositories/deviceRepository");
@@ -22,7 +22,7 @@ class DeviceService {
     }
 
     if (deviceInfo.user_id !== userId) {
-      throw new BadRequest({device_id: 'invalid'});
+      throw new Forbidden({device_id: 'mismatch'});
     }
   }
 
