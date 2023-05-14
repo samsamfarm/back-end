@@ -31,18 +31,25 @@ const userService = new UserService();
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: user@example.com
  *               name:
  *                 type: string
+ *                 example: John Doe
  *               nickname:
  *                 type: string
+ *                 example: johndoe
  *               password:
  *                 type: string
+ *                 example: password123
  *               password_confirm:
  *                 type: string
+ *                 example: password123
  *               phone:
  *                 type: string
+ *                 example: "010-1234-5678"
  *               mbti:
  *                 type: string
+ *                 example: "INTJ"
  *     responses:
  *       200:
  *         description: 회원가입 완료.
@@ -54,18 +61,25 @@ const userService = new UserService();
  *                 email:
  *                   type: string
  *                   format: email
+ *                   example: user@example.com
  *                 name:
  *                   type: string
+ *                   example: John Doe
  *                 nickname:
  *                   type: string
+ *                   example: johndoe
  *                 mbti:
  *                   type: string
+ *                   example: "INTJ"
  *                 phone:
  *                   type: string
+ *                   example: "+1 123-456-7890"
  *                 created_at:
  *                   type: string
+ *                   example: "2023-05-14T12:34:56Z"
  *                 updated_at:
  *                   type: string
+ *                   example: "2023-05-14T12:34:56Z"
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -99,11 +113,13 @@ router.post('/sign-up', async (req, res, next) => {
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: user@example.com
  *               password:
  *                 type: string
+ *                 example: password123
  *     responses:
  *       200:
- *         description: 회원가입 완료.
+ *         description: 로그인 성공.
  *         content:
  *           application/json:
  *             schema:
@@ -112,10 +128,13 @@ router.post('/sign-up', async (req, res, next) => {
  *                 email:
  *                   type: string
  *                   format: email
+ *                   example: user@example.com
  *                 name:
  *                   type: string
+ *                   example: John Doe
  *                 accessToken:
  *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
  *       400:
  *         description: BAD_REQUEST.
  */
