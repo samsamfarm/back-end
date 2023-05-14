@@ -33,14 +33,19 @@ const actuatorService = new ActuatorService()
  *                     properties:
  *                       id:
  *                         type: number
+ *                         example: 1
  *                       user_id:
  *                         type: number
+ *                         example: 123
  *                       created_at:
  *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
  *                       updated_at:
  *                         type: string
+ *                         example: "2023-05-14T13:45:00Z"
  *                       deleted_at:
  *                         type: string
+ *                         example: null
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -69,8 +74,9 @@ router.get("/", async (req, res, next) => {
  *           schema:
  *             type: object
  *             properties:
- *               id:
+ *               device_id:
  *                type: number
+ *                example: 5
  *     responses:
  *       200:
  *         description: 디바이스 생성 성공.
@@ -80,7 +86,7 @@ router.get("/", async (req, res, next) => {
  *               type: object
  *               properties:
  *                 data:
- *                   type: ok
+ *                   example: ok
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -104,36 +110,41 @@ router.post("/", async (req, res, next) => {
  * @swagger
  * /api/v1/device/control:
  *   get:
- *     summary: 액츄에이터 제어 명령 조회(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
+ *     summary: 액츄에이터 제어 명령 조회
  *     tags: [device]
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: 액츄에이터 제어 명령 조회 성공.
+ *         description: 전체 디바이스 조회 성공.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 data:
- *                   type: object
- *                   properties:
- *                     device_id:
- *                       type: number
- *                     wind_command:
- *                       type: boolean
- *                     water_command:
- *                       type: boolean
- *                     light_command:
- *                       type: boolean
- *                     id:
- *                       type: number
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: number
+ *                         example: 1
+ *                       user_id:
+ *                         type: number
+ *                         example: 123
+ *                       created_at:
+ *                         type: string
+ *                         example: "2023-05-14T12:34:56Z"
+ *                       updated_at:
+ *                         type: string
+ *                         example: "2023-05-14T13:45:00Z"
+ *                       deleted_at:
+ *                         type: string
+ *                         example: null
  *       400:
  *         description: BAD_REQUEST.
  */
-
-
 router.get("/control", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -150,7 +161,7 @@ router.get("/control", async (req, res, next) => {
  * @swagger
  * /api/v1/device/control:
  *   post:
- *     summary: 액츄에이터 제어 명령(이 부분은 postman에서 검사해주세요 스웨거에서는 안되는데 이유를 못 찾음)
+ *     summary: 액츄에이터 제어 명령
  *     tags: [device]
  *     security:
  *       - BearerAuth: []
@@ -162,13 +173,17 @@ router.get("/control", async (req, res, next) => {
  *             type: object
  *             properties:
  *               device_id:
- *                type: number
+ *                 type: number
+ *                 example: 5
  *               wind_command:
- *                type: boolean
+ *                 type: boolean
+ *                 example: true
  *               water_command:
- *                type: boolean
+ *                 type: boolean
+ *                 example: false
  *               light_command:
- *                type: boolean   
+ *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
  *         description: 액츄에이터 제어 성공.
@@ -178,7 +193,7 @@ router.get("/control", async (req, res, next) => {
  *               type: object
  *               properties:
  *                 data:
- *                   type: ok
+ *                   example: ok
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -204,7 +219,7 @@ router.post("/control", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/device/{device_id}:
+ * /api/v1/device/{id}:
  *   get:
  *     summary: 디바이스 조회
  *     tags: [device]
@@ -230,14 +245,19 @@ router.post("/control", async (req, res, next) => {
  *                   properties:
  *                     id:
  *                       type: number
+ *                       example: 123
  *                     user_id:
  *                       type: number
+ *                       example: 456
  *                     created_at:
  *                       type: string
+ *                       example: "2023-05-14T12:34:56Z"
  *                     updated_at:
  *                       type: string
+ *                       example: "2023-05-14T13:45:00Z"
  *                     deleted_at:
  *                       type: string
+ *                       example: null
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -272,6 +292,7 @@ router.get("/:id", async (req, res, next) => {
  *           type: number
  *         required: true
  *         description: 디바이스 ID
+ *         example: 123
  *     responses:
  *       200:
  *         description: 센서 데이터 조회 성공.
@@ -285,14 +306,19 @@ router.get("/:id", async (req, res, next) => {
  *                   properties:
  *                     id:
  *                       type: number
+ *                       example: 123
  *                     temperature:
  *                       type: number
+ *                       example: 25.4
  *                     humid:
  *                       type: number
+ *                       example: 60.2
  *                     moisture:
  *                       type: number
+ *                       example: 35.8
  *                     bright:
  *                       type: number
+ *                       example: 200
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -305,6 +331,5 @@ router.get("/plant-data/:device_id", async (req, res, next) => {
     next(error);
   }
 });
-
 
 module.exports = router;
