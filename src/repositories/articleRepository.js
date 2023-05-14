@@ -17,14 +17,14 @@ class ArticleRepository extends Repository {
   }
   async getArticleWithComment(article_id) {
     await this.db(this.table)
-    .join("comments", "articles.id" = "comments.article_id")
+    .join("comments", "articles.id", "=", "comments.article_id")
     .select(
       'articles.title',
       'articles.content',
-      'articles.created_at',
+      'articles.created_at as article_created_at',
       'articles.view_count',
-      'comments.content',
-      'comments.created_at'
+      'comments.content as comment',
+      'comments.created_at as comment_created_at'
     )
     .where("articles.id", article_id);
   } 
