@@ -42,7 +42,7 @@ exports.up = function (knex) {
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table
       .datetime("updated_at")
-      .defaultTo(Database.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+      .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
     table.datetime("deleted_at");
     table.foreign("user_id").references("users.id");
     table.foreign("article_id").references("articles.id");

@@ -6,8 +6,8 @@
  *       type: object
  *       required:
  *         - user_id
- *         - content
- *         - device_id  
+ *         - title
+ *         - content  
  *       properties:
  *         id:
  *           type: number
@@ -15,14 +15,17 @@
  *         user_id:
  *           type: number
  *           description: 게시물 올린 유저id 입니다.
+ *         title:
+ *           type: string
+ *           description: 게시물 제목 입니다.
  *         content:
- *           type: boolean
+ *           type: string
  *           description: 게시물 내용 입니다.
  *         view_count:
- *           type: boolean
+ *           type: number
  *           description: 게시물 조회수 입니다.
  *         created_at:
- *           type: boolean
+ *           type: string
  *           description: 게시물이 생성된 날짜 입니다.
  *         updated_at:
  *           type: string
@@ -37,12 +40,13 @@ exports.up = function (knex) {
   return knex.schema.createTable("articles", (table) => {
     table.increments("id").primary();
     table.integer("user_id").unsigned();
-    table.text("content", 255).notNullable();
+    table.text("title").notNullable();
+    table.text("content").notNullable();
     table.integer("view_count").unsigned().defaultTo(1);
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table
       .datetime("updated_at")
-      .defaultTo(Database.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
+      .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
     table.datetime("deleted_at");
     table.foreign("user_id").references("users.id");
   });

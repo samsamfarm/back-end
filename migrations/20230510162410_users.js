@@ -61,9 +61,7 @@ exports.up = function(knex) {
       table.datetime("created_at").defaultTo(knex.fn.now());
       table
         .datetime("updated_at")
-        .defaultTo(
-          Database.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-        );
+        .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
       table.datetime("deleted_at");
       table.unique("email");
     });

@@ -1,43 +1,10 @@
 const express = require("express");
 
-module.exports = (connection) => {
-  const router = express.Router();
-  /**
-   * @swagger
-   * /api/v1/article:
-   *   post:
-   *     summary: 새로운 게시물 작성
-   *     tags: [article]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/articles'
-   *     responses:
-   *       200:
-   *         description: 새로운 개시물 작성 완료.
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/articles'
-   *       404:
-   *         $ref: '#/components/responses/NotFound'
-   */
-  router.post("/", async (rep, res, next) => {
-    try {
-      const { title, content } = req.body;
-      const result = await connection.query(
-        `INSERT INTO posts (title, content) VALUES (?, ?)`,
-        [title, content]
-      );
-      console.log(result);
+const {creatArticleDTO} = require("../../dtos/articleDto");
+const ArticeService = require("../../services/articleService");
 
-      res.json({ data: "ok" });
-    } catch (error) {
-      next(error);
-    }
-  });
+const router = express.Router();
+const articeService = new ArticeService();
   /**
    * @swagger
    * /api/v1/article:
@@ -60,8 +27,42 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
+  //댓글과 조인
   router.get("/", (req, res) => {
     res.json({ data: "ok" });
+  });
+
+  /**
+   * @swagger
+   * /api/v1/article:
+   *   post:
+   *     summary: 새로운 게시물 작성
+   *     tags: [article]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/articles'
+   *     responses:
+   *       200:
+   *         description: 새로운 개시물 작성 완료.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/articles'
+   *       404:
+   *         $ref: '#/components/responses/NotFound'
+   */
+  //TODO: 게시글 생성하고, 
+  router.post("/", async (req, res, next) => {
+    try {
+      const article = creatArticleDTO(req.body);
+      const newArticle = articeService.newArtcle(article);
+      res.json({ data: newArticle });
+    } catch (error) {
+      next(error);
+    }
   });
 
   /**
@@ -93,6 +94,7 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
+  // 게시물 하나씩
   router.get("/:article-id", (req, res) => {
     res.json({ data: "ok" });
   });
@@ -125,6 +127,7 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
+  //수정
   router.patch("/:article-id", (req, res) => {
     res.json({ data: "ok" });
   });
@@ -158,11 +161,15 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
+  //삭제
   router.delete("/:article-id", (req, res) => {
     res.json({ date: "ok" });
   });
 
-  router.use("/comment", require("./commentController")(this.connection));
-  
-  return router;
-};
+  router.post("/comment")
+
+  router.put("/comment");
+
+  router.delete("/comment");
+
+module.exports = router;
