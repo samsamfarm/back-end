@@ -113,6 +113,7 @@ class CreateUserRequestDTO {
     password;
     mbti;
     phone;
+    device_id;
 
     constructor(requestData) {
         const requireData = ['email', 'password', 'password_confirm', 'phone', 'mbti', 'nickname', 'name'];
@@ -127,10 +128,10 @@ class CreateUserRequestDTO {
             throw new BadRequest({email: 'invited'});
         }
 
-        const passwordFlag = checkByPasswordCompare(requestData.password, requestData.password_confirm);
-        if (passwordFlag === false) {
-            throw new BadRequest({password_confirm: 'invited'});
-        }
+        // const passwordFlag = checkByPasswordCompare(requestData.password, requestData.password_confirm);
+        // if (passwordFlag === false) {
+        //     throw new BadRequest({password_confirm: 'invited'});
+        // }
 
         const phoneFlag = checkByPhone(requestData.phone);
         if (phoneFlag === false) {
@@ -148,6 +149,7 @@ class CreateUserRequestDTO {
         this.nickname = requestData.nickname;
         this.mbti = requestData.mbti;
         this.phone = requestData.phone;
+        this.device_id = requestData?.device_id;
     }
 }
 
