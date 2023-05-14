@@ -12,7 +12,7 @@ module.exports = verifyToken = (req, res, next) => {
     const [bearer, token] = authorization?.split(" ");
 
     const bearerList = ['Bearer', 'bearer', 'BEARER'];
-    if (bearerList.include(bearer) === false) {
+    if (bearerList.includes(bearer) === false) {
       throw new Unauthorized({ token: "invalid_credentials" });
     }
 
