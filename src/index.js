@@ -16,6 +16,7 @@ const {
   NotFound,
 } = require("./errors");
 const { verifyToken } = require("./middlewares");
+const morgan = require("morgan");
 
 class App {
   constructor() {
@@ -34,6 +35,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cors());
+    this.app.use(morgan("combined"));
   }
 
   registerRoutes() {
