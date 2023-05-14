@@ -50,9 +50,8 @@ const router = express.Router();
  */
 router.get("/", async (req, res, next) => {
   try {
-    const devices = await deviceService.getDevices();
-
-    res.send({ data: devices });
+    const allPlants = await plantService.getAllPlant();
+    res.json({ data: allPlants });
   } catch (err) {
     next(err);
   }
