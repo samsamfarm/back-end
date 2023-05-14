@@ -1,11 +1,15 @@
 const express = require("express");
 
 const { CreateArticleDTO, ModifyArticleDTO } = require("../../dtos/articleDto");
+const { CommentDTO } = require("../../dtos/commentDto");
 const ArticeService = require("../../services/articleService");
+const CommentService = require("../../services/commentService");
 
 const router = express.Router();
 const articeService = new ArticeService();
-  /**
+const commentService = new CommentService();
+  
+/**
    * @swagger
    * /api/v1/article:
    *   get:
@@ -27,7 +31,6 @@ const articeService = new ArticeService();
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  //댓글과 조인
   router.get("/", (req, res, next) => {
     try {
       const allArticle = articeService.getAllArticle();
@@ -62,7 +65,8 @@ const articeService = new ArticeService();
   //TODO: 게시글 생성하고, 
   router.post("/", async (req, res, next) => {
     try {
-      const article = CreateArticleDTO(req.body);
+       const { user_id, title, content } = req.body; 
+      const article = new CreateArticleDTO({user_id, title, content});
       const newArticle = articeService.newArtcle(article);
       res.json({ data: newArticle });
     } catch (error) {
@@ -103,9 +107,10 @@ const articeService = new ArticeService();
   router.get("/:article-id", (req, res, next) => {
     try {
       const {articleId} = req.body;
-      const getArticleWithComment =
-       articeService.getArticleWithComment(articleId);
+      const getArticleWithComment = articeService.getArticleWithComment(articleId);
+      
       res.json({ data: getArticleWithComment });
+    
     } catch(err) {
       next(err);
     }
@@ -195,17 +200,28 @@ const articeService = new ArticeService();
       next(err);
     }
   });
+
 // 댓글 추가
   router.post("/comment", (req, res, next) => {
     try {
+      const { user_id, article_id, content } = req.body; 
+      const comment = new CommentDTO({ user_id, article_id, content });
+      const newComment = commentService.newComment(comment);
+      res.json({ data: newComment });
+    } catch(err) {
+      next(err);
+    }``
+  })
+//댓글 삭제
 
+  router.delete("/comment/:comment-id", (req, res, next) => {
+    try {
+      const { commentId } = req.params;
+      commentService.deleteComment(commentId);
+      res.status(204).end();
     } catch(err) {
       next(err);
     }
-  })
-//댓글
-  router.put("/comment");
-
-  router.delete("/comment");
+  });
 
 module.exports = router;

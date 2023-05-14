@@ -3,14 +3,14 @@ const { BadRequest } = require("../errors");
 class ArticleRepository extends Repository {
   constructor() {
     super();
-    this.table = "article";
+    this.table = "articles";
   }
     async findById(id) {
     return this.__findByPrimaryKey(this.table, id);
   }
   async newArtcle(info) {
     await this.db(this.table).insert({
-      user_id: info.userId,
+      user_id: info.user_id,
       title: info.title,
       content: info.content
    });
