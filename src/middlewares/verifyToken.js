@@ -1,31 +1,30 @@
 const jwt = require("jsonwebtoken");
 const { Unauthorized } = require("../errors");
 
-module.exports = verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   try {
-    const headers = req.headers; 
-    const authorization = headers?.authorization || headers?.Authorization || headers.AUTHORIZATION;
-    if (authorization == null) {
+    const { authorization } = req.headers;
+    if (!authorization) {
       throw new Unauthorized({ token: "invalid_credentials" });
     }
 
-    const [bearer, token] = authorization?.split(" ");
-
-    const bearerList = ['Bearer', 'bearer', 'BEARER'];
-    if (bearerList.includes(bearer) === false) {
+    const [bearer, token] = authorization.split(" ");
+    const bearerSet = new Set(["Bearer", "bearer", "BEARER"]);
+    if (!bearerSet.has(bearer)) {
       throw new Unauthorized({ token: "invalid_credentials" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     req.user = decoded;
 
     next();
   } catch (err) {
-    if (err?.name == "TokenExpiredError") {
+    if (err.name === "TokenExpiredError") {
       throw new Unauthorized({ token: "expired" });
     }
 
     throw new Unauthorized({ token: "invalid_credentials" });
   }
 };
+
+module.exports = verifyToken;
