@@ -1,11 +1,14 @@
 const { BadRequest, InternalServerError, Unauthorized } = require('../errors');
 const UserRepository = require('../repositories/userRepository');
+const DeviceRepository = require('../repositories/deviceRepository');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserService {
     constructor() {
         this.repository = new UserRepository();
+        this.deviceRepository = new DeviceRepository();
     }
 
     findUserByUserId(id) {
@@ -48,6 +51,7 @@ class UserService {
 
      async getLoginInfoByUser(user) {
         const userInfo = await this.repository.findByEmail(user.email);
+        const deivce = await this.deviceRepository.getDeviceByUserId(userInfo.id);
         if (userInfo == null) {
             throw new Error("Not Found User");
         }
@@ -56,6 +60,7 @@ class UserService {
         const tokenPayload = {
             id: userInfo.id,
             email: userInfo.email,
+            deivce_id: deivce?.id || null,
         };
 
         const tokenOptions = {
