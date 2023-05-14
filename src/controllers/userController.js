@@ -29,24 +29,29 @@ const router = express.Router();
  *               type: object
  *               properties:
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       email:
- *                         type: string
- *                       name:
- *                         type: string
- *                       nickname:
- *                         type: string
- *                       mbti:
- *                         type: string
- *                       phone:
- *                         type: string
- *                       created_at:
- *                         type: string
- *                       updated_at:
- *                         type: string
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                       example: "example@example.com"
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     nickname:
+ *                       type: string
+ *                       example: "johndoe"
+ *                     mbti:
+ *                       type: string
+ *                       example: "INTJ"
+ *                     phone:
+ *                       type: string
+ *                       example: "123-456-7890"
+ *                     created_at:
+ *                       type: string
+ *                       example: "2023-05-14T12:34:56Z"
+ *                     updated_at:
+ *                       type: string
+ *                       example: "2023-05-14T13:45:00Z"
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -80,7 +85,8 @@ router.get("/", async (req, res, next) => {
  *         schema:
  *           type: number
  *         required: true
- *         description: ID  
+ *         description: ID
+ *         example: 12  
  *     responses:
  *       200:
  *         description: 성공.
@@ -90,24 +96,29 @@ router.get("/", async (req, res, next) => {
  *               type: object
  *               properties:
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       email:
- *                         type: string
- *                       name:
- *                         type: string
- *                       nickname:
- *                         type: string
- *                       mbti:
- *                         type: string
- *                       phone:
- *                         type: string
- *                       created_at:
- *                         type: string
- *                       updated_at:
- *                         type: string
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                       example: "example@example.com"
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     nickname:
+ *                       type: string
+ *                       example: "johndoe"
+ *                     mbti:
+ *                       type: string
+ *                       example: "INTJ"
+ *                     phone:
+ *                       type: string
+ *                       example: "123-456-7890"
+ *                     created_at:
+ *                       type: string
+ *                       example: "2023-05-14T12:34:56Z"
+ *                     updated_at:
+ *                       type: string
+ *                       example: "2023-05-14T13:45:00Z"
  *       400:
  *         description: BAD_REQUEST.
  */
@@ -129,9 +140,9 @@ router.get("/:id", async (req, res, next) => {
 
 /**
  * @swagger
- * /api/v1/device/control:
+ * /api/v1/user/control:
  *   put:
- *     summary: 유저 정보 수정  (내꺼만 수정)
+ *     summary: 유저 정보 수정 (내 정보)
  *     tags: [user]
  *     security:
  *       - BearerAuth: []
@@ -144,12 +155,16 @@ router.get("/:id", async (req, res, next) => {
  *             properties:
  *               password:
  *                type: string
+ *                example: "newpassword"
  *               phone:
  *                type: string
+ *                example: "123-456-7890"
  *               name:
  *                type: string
+ *                example: "John Doe"
  *               nickname:
- *                type: string   
+ *                type: string
+ *                example: "johndoe"
  *     responses:
  *       200:
  *         description: 수정 성공.
@@ -163,21 +178,29 @@ router.get("/:id", async (req, res, next) => {
  *                   properties:
  *                     email:
  *                       type: string
+ *                       example: "example@example.com"
  *                     name:
  *                       type: string
+ *                       example: "John Doe"
  *                     nickname:
  *                       type: string
+ *                       example: "johndoe"
  *                     mbti:
  *                       type: string
+ *                       example: "INTJ"
  *                     phone:
  *                       type: string
+ *                       example: "123-456-7890"
  *                     created_at:
  *                       type: string
+ *                       example: "2023-05-14T12:34:56Z"
  *                     updated_at:
  *                       type: string
+ *                       example: "2023-05-14T13:45:00Z"
  *       400:
  *         description: BAD_REQUEST.
  */
+
 router.put("/:id", async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -213,7 +236,8 @@ router.put("/:id", async (req, res, next) => {
  *         schema:
  *           type: number
  *         required: true
- *         description: ID  
+ *         description: ID 
+ *         example: 12 
  *     responses:
  *       204:
  *         description: 성공.
