@@ -1,6 +1,6 @@
 const express = require("express");
 
-const {creatArticleDTO} = require("../../dtos/articleDto");
+const { CreateArticleDTO, ModifyArticleDTO } = require("../../dtos/articleDto");
 const ArticeService = require("../../services/articleService");
 
 const router = express.Router();
@@ -28,8 +28,13 @@ const articeService = new ArticeService();
    *         $ref: '#/components/responses/NotFound'
    */
   //댓글과 조인
-  router.get("/", (req, res) => {
-    res.json({ data: "ok" });
+  router.get("/", (req, res, next) => {
+    try {
+      const allArticle = articeService.getAllArticle();
+      res.json({ data: allArticle });
+    } catch(err) {
+      next(err)
+    }
   });
 
   /**
@@ -57,7 +62,7 @@ const articeService = new ArticeService();
   //TODO: 게시글 생성하고, 
   router.post("/", async (req, res, next) => {
     try {
-      const article = creatArticleDTO(req.body);
+      const article = CreateArticleDTO(req.body);
       const newArticle = articeService.newArtcle(article);
       res.json({ data: newArticle });
     } catch (error) {
@@ -95,8 +100,16 @@ const articeService = new ArticeService();
    *         $ref: '#/components/responses/NotFound'
    */
   // 게시물 하나씩
-  router.get("/:article-id", (req, res) => {
-    res.json({ data: "ok" });
+  router.get("/:article-id", (req, res, next) => {
+    try {
+      const {articleId} = req.body;
+      const getArticleWithComment =
+       articeService.getArticleWithComment(articleId);
+      res.json({ data: getArticleWithComment });
+    } catch(err) {
+      next(err);
+    }
+    
   });
   /**
    * @swagger
@@ -128,8 +141,19 @@ const articeService = new ArticeService();
    *         $ref: '#/components/responses/NotFound'
    */
   //수정
-  router.patch("/:article-id", (req, res) => {
-    res.json({ data: "ok" });
+  router.patch("/:article-id", (req, res, next) => {
+    try {
+      const { articleId } = req.params; 
+      const { title, content } = req.body; 
+
+      const modifyArticleDTO = new ModifyArticleDTO({ title, content });
+
+      const modifyArticle = articeService.modifyArticle(articleId, modifyArticleDTO);
+
+      res.json({ data: modifyArticle });
+    } catch (err) {
+      next(err);
+    }
   });
   // 게시물 삭제
   /**
@@ -162,12 +186,24 @@ const articeService = new ArticeService();
    *         $ref: '#/components/responses/NotFound'
    */
   //삭제
-  router.delete("/:article-id", (req, res) => {
-    res.json({ date: "ok" });
+  router.delete("/:article-id", (req, res, next) => {
+    try {
+      const { articleId } = req.params;
+      articeService.deleteArticle(articleId);
+      res.status(204).end();
+    } catch(err) {
+      next(err);
+    }
   });
+// 댓글 추가
+  router.post("/comment", (req, res, next) => {
+    try {
 
-  router.post("/comment")
-
+    } catch(err) {
+      next(err);
+    }
+  })
+//댓글
   router.put("/comment");
 
   router.delete("/comment");
