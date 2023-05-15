@@ -36,8 +36,18 @@ class ArticleRepository extends Repository {
     const offset = (page - 1) * perPage;
 
     return this.db(this.table)
-      .select()
-      .from("articles")
+      .join("users", "articles.user_id", "=", "users.id")
+      .select(
+        "articles.id",
+        "articles.user_id",
+        "articles.title",
+        "articles.content",
+        "articles.view_count",
+        "articles.created_at",
+        "articles.updated_at",
+        "articles.deleted_at",
+        "users.nickname"
+      )
       .limit(perPage)
       .offset(offset);
   }
