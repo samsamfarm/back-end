@@ -9,8 +9,8 @@ class ArticleService {
     await this.articleRepository.newArtcle(info);
   }
 
-  getAllArticle() {
-    return this.articleRepository.getAllArticle();
+  getAllArticle(page, perPage) {
+    return this.articleRepository.getAllArticle(page, perPage);
   }
 
   getArticleWithComment(articleId) {

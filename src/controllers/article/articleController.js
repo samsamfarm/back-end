@@ -71,8 +71,8 @@ const commentService = new CommentService();
 
   router.get("/", async (req, res, next) => {
     try {
-      const allArticle = await articleService.getAllArticle();
-      console.log(allArticle)
+      const { page, perPage } = req.query;
+      const allArticle = await articleService.getAllArticle(page, perPage);
       res.send({ data: allArticle });
     } catch(err) {
       next(err)

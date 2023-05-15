@@ -5,63 +5,67 @@ class ArticleRepository extends Repository {
     super();
     this.table = "articles";
   }
-    async findById(id) {
+  async findById(id) {
     return this.__findByPrimaryKey(this.table, id);
   }
   async newArtcle(info) {
     await this.db(this.table).insert({
       user_id: info.user_id,
       title: info.title,
-      content: info.content
-   });
+      content: info.content,
+    });
   }
   async getArticleWithComment(article_id) {
     const result = await this.db(this.table)
       .join("comments", "articles.id", "=", "comments.article_id")
       .select(
-      'articles.title',
-      'articles.content',
-      'articles.created_at as article_created_at',
-      'articles.view_count',
-      'comments.content as comment',
-      'comments.created_at as comment_created_at'
-    )
+        "articles.title",
+        "articles.content",
+        "articles.created_at as article_created_at",
+        "articles.view_count",
+        "comments.content as comment",
+        "comments.created_at as comment_created_at"
+      )
       .where("articles.id", article_id);
     return result;
-  } 
+  }
 
-  getAllArticle() {
-    return this.db(this.table).select().from("articles")
+  getAllArticle(page, perPage) {
+    const offset = (page - 1) * perPage;
+
+    return this.db(this.table)
+      .select()
+      .from("articles")
+      .limit(perPage)
+      .offset(offset);
   }
 
   async modifyArticle(article_id, modifyArticleDTO) {
     try {
-      const article = await findById(article_id)
+      const article = await findById(article_id);
       if (!article) {
-      throw new BadRequest('Article not found');
-    }
-      await this.db(this.table).where('id', article_id).update({
+        throw new BadRequest("Article not found");
+      }
+      await this.db(this.table).where("id", article_id).update({
         title: modifyArticleDTO.title,
         content: modifyArticleDTO.content,
-      })
+      });
 
-      return {id: article_id, ...modifyArticleDTO};
-      
-    } catch(err) {
-      next(err)
+      return { id: article_id, ...modifyArticleDTO };
+    } catch (err) {
+      next(err);
     }
   }
 
   async deleteArticle(article_id) {
     try {
       const result = await this.db(this.table).where("id", article_id).update({
-      deleted_at: new Date(),
-    });
+        deleted_at: new Date(),
+      });
 
-    return result;
-    
-    } catch(err) {
-      next(err)
+      return result;
+    } catch (err) {
+      next(err);
     }
   }
 }
