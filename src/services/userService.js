@@ -15,8 +15,18 @@ class UserService {
         return this.repository.findById(id);
     }
 
-    createUser(user) {
-        return this.repository.createUser(user);
+    async createUser(user) {
+        try {
+            const result = await this.repository.createUser(user);
+            return result;
+        } catch(error) {
+            if(error.errno == 1062) {
+                throw new BadRequest({ email: "duplicate" });
+            } else {
+                console.error("email : failed", error);
+                throw new BadRequest({ email: "failed" });
+            }
+        }
     }
 
     async validateUserByUserId(userId) {
@@ -30,7 +40,7 @@ class UserService {
         try {
             const userFlag = await this.repository.findByEmail(email);
             if (userFlag === null) {
-                throw new BadRequest("Not Found User")
+                throw new BadRequest({ user: "not_found" });
             };
         } catch (error) {
             new Error(error);
@@ -53,7 +63,7 @@ class UserService {
         const userInfo = await this.repository.findByEmail(user.email);
         const device = await this.deviceRepository.getDeviceByUserId(userInfo.id);
         if (userInfo == null) {
-            throw new Error("Not Found User");
+            throw new Error({ user: "not_found" });
         }
 
         // Create JWT

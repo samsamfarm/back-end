@@ -26,18 +26,18 @@ class UserRepository extends Repository {
         nickname: user.nickname,
         password: user.password,
         mbti: user.mbti,
-        phone: user.phone
+        phone: user.phone,
       })
-      .catch((error) => {
-        if (error.errno == 1062) {
-          // FIXME: Repository 에서는 에러 핸들링을 해주면 안되고, 에러가 발생하지 않기 위해 미리 검증을 해주어야 한다. 
-          throw new BadRequest({ email: "duplicate" });
-        } else {
-          console.error("email : failed", error);
-          throw new BadRequest({ email : "failed"});
-        }
-      });
-
+      // .catch((error) => {
+      //   if (error.errno == 1062) {
+      //     // FIXME: Repository 에서는 에러 핸들링을 해주면 안되고, 에러가 발생하지 않기 위해 미리 검증을 해주어야 한다.
+      //     throw new BadRequest({ email: "duplicate" });
+      //   } else {
+      //     console.error("email : failed", error);
+      //     throw new BadRequest({ email: "failed" });
+      //   }
+      // });
+      
     const result = await this.findById(userId[0]);
     return result;
   }
