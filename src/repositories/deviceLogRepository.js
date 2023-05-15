@@ -20,7 +20,6 @@ class DeviceLogRepositoy extends Repository {
       .orderBy("device_logs.created_at", "desc")
       .first();
 
-      // 디버깅 걸렷잔항요 Next 버튼 클릭 ㄱㄱ 
       if (deviceLog == null) {
         return null;
       }

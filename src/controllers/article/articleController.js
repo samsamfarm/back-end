@@ -18,6 +18,17 @@ const commentService = new CommentService();
  *       - article
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: perPage
+ *         schema:
+ *           type: integer
+ *         description: 페이지당 아이템 수 
  *     responses:
  *       200:
  *         description: 모든 게시물 조회 성공.

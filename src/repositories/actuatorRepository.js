@@ -34,24 +34,6 @@ class ActuatorRepository extends Repository {
       .first();
   }
 
-  // async saveActuatorFromMessage(message) {
-  //   try {
-  //     const [result, row] = await this.db(this.table).insert(message);
-  //     if (row === 1) {
-  //       return result;
-  //     }
-  //     // FIXME: row 가 == 이라면 에러입니다. 
-  //     return result;
-  //   } catch (err) {
-  //     console.log(String(err));
-  //     if (err.errno == 1062) {
-  //       throw new BadRequest("Create Actuators Failed - Duplicate Email");
-  //     } else {
-  //       throw new BadRequest("Create Actuators Failed");
-  //     }
-  //   }
-  // }
-
 }
 
 module.exports = ActuatorRepository;
