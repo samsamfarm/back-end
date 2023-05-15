@@ -16,9 +16,9 @@ class ArticleRepository extends Repository {
    });
   }
   async getArticleWithComment(article_id) {
-    await this.db(this.table)
-    .join("comments", "articles.id", "=", "comments.article_id")
-    .select(
+    const result = await this.db(this.table)
+      .join("comments", "articles.id", "=", "comments.article_id")
+      .select(
       'articles.title',
       'articles.content',
       'articles.created_at as article_created_at',
@@ -26,11 +26,12 @@ class ArticleRepository extends Repository {
       'comments.content as comment',
       'comments.created_at as comment_created_at'
     )
-    .where("articles.id", article_id);
+      .where("articles.id", article_id);
+    return result;
   } 
 
-  async getAllArticle() {
-  await this.db(this.table).select("*").from("article")
+  getAllArticle() {
+    return this.db(this.table).select().from("articles")
   }
 
   async modifyArticle(article_id, modifyArticleDTO) {

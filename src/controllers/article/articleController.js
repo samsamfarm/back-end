@@ -6,7 +6,7 @@ const ArticeService = require("../../services/articleService");
 const CommentService = require("../../services/commentService");
 
 const router = express.Router();
-const articeService = new ArticeService();
+const articleService = new ArticeService();
 const commentService = new CommentService();
   
 /**
@@ -69,10 +69,11 @@ const commentService = new CommentService();
  *         description: BAD_REQUEST.
  */
 
-  router.get("/", (req, res, next) => {
+  router.get("/", async (req, res, next) => {
     try {
-      const allArticle = articeService.getAllArticle();
-      res.json({ data: allArticle });
+      const allArticle = await articleService.getAllArticle();
+      console.log(allArticle)
+      res.send({ data: allArticle });
     } catch(err) {
       next(err)
     }
@@ -119,10 +120,12 @@ const commentService = new CommentService();
  */
   router.post("/", async (req, res, next) => {
     try {
-       const { user_id, title, content } = req.body; 
+      const { user_id, title, content } = req.body; 
       const article = new CreateArticleDTO({user_id, title, content});
-      const newArticle = articeService.newArtcle(article);
-      res.json({ data: newArticle });
+
+      await articleService.newArtcle(article);
+      
+      res.json({ data: "ok" });
     } catch (error) {
       next(error);
     }
@@ -130,7 +133,7 @@ const commentService = new CommentService();
 
 /**
  * @swagger
- * /api/v1/article/{article-id}:
+ * /api/v1/article/{articleId}:
  *   get:
  *     summary: 게시물 id 기준으로 해당 게시물과, 댓글 조회
  *     tags: [article]
@@ -177,17 +180,16 @@ const commentService = new CommentService();
  *       400:
  *         description: BAD_REQUEST.
  */
-  router.get("/:article-id", (req, res, next) => {
+  router.get("/:articleId", async(req, res, next) => {
     try {
-      const {articleId} = req.body;
-      const getArticleWithComment = articeService.getArticleWithComment(articleId);
+      const {articleId} = req.params;
+      const getArticleWithComment = await articleService.getArticleWithComment(articleId);
       
-      res.json({ data: getArticleWithComment });
+      res.send({ data: getArticleWithComment });
     
     } catch(err) {
       next(err);
     }
-    
   });
 
 /**
@@ -311,12 +313,12 @@ const commentService = new CommentService();
  *       400:
  *         description: BAD_REQUEST.
  */ 
-  router.post("/comment", (req, res, next) => {
+  router.post("/comment", async (req, res, next) => {
     try {
       const { user_id, article_id, content } = req.body; 
       const comment = new CommentDTO({ user_id, article_id, content });
-      const newComment = commentService.newComment(comment);
-      res.json({ data: newComment });
+      await commentService.newComment(comment);
+      res.json({ data: "ok" });
     } catch(err) {
       next(err);
     }
