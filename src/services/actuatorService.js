@@ -1,9 +1,4 @@
 const ActuatorRepository = require("../repositories/actuatorRepository");
-const DeviceRepository = require("../repositories/deviceRepository");
-
-const {BadRequest} = require("../errors");
-
-
 class ActuatorService {
   constructor() {
     this.actuatorRepository = new ActuatorRepository();
