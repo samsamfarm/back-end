@@ -75,7 +75,7 @@ class ArticleRepository extends Repository {
         .where("id", articleId)
         .increment("view_count", 1);
     } catch (err) {
-      throw err;
+      next(err);
     }
   }
 
