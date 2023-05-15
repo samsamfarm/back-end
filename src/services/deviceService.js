@@ -1,14 +1,14 @@
-const { BadRequest, InternalServerError, Forbidden } = require("../errors");
+const { BadRequest, Forbidden } = require("../errors");
 
 const ActuatorRepository = require("../repositories/actuatorRepository");
 const DeviceRepository = require("../repositories/deviceRepository");
-const DeviceLogRepositoy = require("../repositories/deviceLogRepository")
+const DeviceLogRepository = require("../repositories/deviceLogRepository")
 
 class DeviceService {
   constructor() {
     this.actuatorRepository = new ActuatorRepository();
     this.deviceRepository = new DeviceRepository();
-    this.deviceLogRepositoy = new DeviceLogRepositoy();
+    this.deviceLogRepository = new DeviceLogRepository();
   }
 
   async sendMQTTByMessage(message) {
@@ -32,14 +32,14 @@ class DeviceService {
     }
   }
 
-  async vaildateAlreadyExistsByDeviceId(deviceId) {
+  async validateAlreadyExistsByDeviceId(deviceId) {
     const device = await this.deviceRepository.getDeviceById(deviceId);
     if (device) {
       throw new BadRequest({ device_id: "already_exists" });
     }
   }
 
-  async vaildateNotFoundByDeviceId(deviceId) {
+  async validateNotFoundByDeviceId(deviceId) {
     const device = await this.deviceRepository.getDeviceById(deviceId);
     if (device == null) {
       throw new BadRequest({ device_id: "not_found" });
@@ -48,7 +48,7 @@ class DeviceService {
 
   async createDevice(deviceId, userId) {
     await this.validateDeviceId(deviceId);
-    await this.vaildateAlreadyExistsByDeviceId(deviceId);
+    await this.validateAlreadyExistsByDeviceId(deviceId);
 
     await this.deviceRepository.createDevice(
       deviceId,
@@ -67,7 +67,7 @@ class DeviceService {
   }
 
   getDeviceLogById(deviceId) {
-    return this.deviceLogRepositoy.getDeviceLogById(deviceId);
+    return this.deviceLogRepository.getDeviceLogById(deviceId);
   }
 
   getDeviceByUserId(userId) {
