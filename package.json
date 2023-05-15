@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nodemon test/publishTest.js",
-    "test-subcribe": "nodemon test/subscribeTest.js",
+    "test-subscribe": "nodemon test/subscribeTest.js",
     "start": "nodemon src/index.js"
   },
   "repository": {
