@@ -2,11 +2,11 @@ const express = require("express");
 
 const { CreateArticleDTO, ModifyArticleDTO } = require("../../dtos/articleDto");
 const { CommentDTO } = require("../../dtos/commentDto");
-const ArticeService = require("../../services/articleService");
+const ArticleService = require("../../services/articleService");
 const CommentService = require("../../services/commentService");
 
 const router = express.Router();
-const articleService = new ArticeService();
+const articleService = new ArticleService();
 const commentService = new CommentService();
   
 /**
@@ -134,7 +134,7 @@ const commentService = new CommentService();
       const { user_id, title, content } = req.body; 
       const article = new CreateArticleDTO({user_id, title, content});
 
-      await articleService.newArtcle(article);
+      await articleService.newArticle(article);
       
       res.json({ data: "ok" });
     } catch (error) {
@@ -195,7 +195,7 @@ const commentService = new CommentService();
     try {
       const {articleId} = req.params;
       const getArticleWithComment = await articleService.getArticleWithComment(articleId);
-      
+      articleService.countView(articleId);
       res.send({ data: getArticleWithComment });
     
     } catch(err) {
@@ -245,7 +245,7 @@ const commentService = new CommentService();
 
       const modifyArticleDTO = new ModifyArticleDTO({ title, content });
 
-      const modifyArticle = articeService.modifyArticle(articleId, modifyArticleDTO);
+      const modifyArticle = articleService.modifyArticle(articleId, modifyArticleDTO);
 
       res.json({ data: modifyArticle });
     } catch (err) {
@@ -279,7 +279,7 @@ const commentService = new CommentService();
   router.delete("/:article-id", (req, res, next) => {
     try {
       const { articleId } = req.params;
-      articeService.deleteArticle(articleId);
+      articleService.deleteArticle(articleId);
       res.status(204).end();
     } catch(err) {
       next(err);

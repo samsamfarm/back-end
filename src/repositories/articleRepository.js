@@ -8,7 +8,7 @@ class ArticleRepository extends Repository {
   async findById(id) {
     return this.__findByPrimaryKey(this.table, id);
   }
-  async newArtcle(info) {
+  async newArticle(info) {
     await this.db(this.table).insert({
       user_id: info.user_id,
       title: info.title,
@@ -66,6 +66,16 @@ class ArticleRepository extends Repository {
       return { id: article_id, ...modifyArticleDTO };
     } catch (err) {
       next(err);
+    }
+  }
+
+  async countView(articleId) {
+    try {
+      await this.db(this.table)
+        .where("id", articleId)
+        .increment("view_count", 1);
+    } catch (err) {
+      throw err;
     }
   }
 

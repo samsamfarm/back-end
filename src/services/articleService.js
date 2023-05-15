@@ -5,8 +5,8 @@ class ArticleService {
     this.articleRepository = new ArticleRepository();
   }
 
-  async newArtcle(info) {
-    await this.articleRepository.newArtcle(info);
+  async newArticle(info) {
+    await this.articleRepository.newArticle(info);
   }
 
   getAllArticle(page, perPage) {
@@ -20,6 +20,11 @@ class ArticleService {
   modifyArticle(articleId, modifyArticleDTO) {
     return this.articleRepository.modifyArticle(articleId, modifyArticleDTO);
   }
+
+  countView(articleId) {
+    return this.articleRepository.countView(articleId);
+  }
+
   deleteArticle(articleId) {
     return this.articleRepository.deleteArticle();
   }
