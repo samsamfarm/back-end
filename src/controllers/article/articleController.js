@@ -196,7 +196,7 @@ const commentService = new CommentService();
  * @swagger
  * /api/v1/article/{article-id}:
  *   patch:
- *     summary: 게시물 수정
+ *     summary: 게시물 수정 안씀
  *     tags: [article]
  *     security:
  *       - BearerAuth: []
@@ -246,7 +246,7 @@ const commentService = new CommentService();
  * @swagger
  * /api/v1/article/{article-id}:
  *   delete:
- *     summary: 게시물 삭제
+ *     summary: 게시물 삭제 안씀
  *     tags: [article]
  *     security:
  *       - BearerAuth: []
@@ -328,7 +328,7 @@ const commentService = new CommentService();
  * @swagger
  * /api/v1/comment/:comment-id:
  *   delete:
- *     summary: 댓글 삭제
+ *     summary: 댓글 삭제 안씀
  *     tags: [article]
  *     security:
  *       - BearerAuth: []
