@@ -1,6 +1,6 @@
 const { Repository } = require("./index");
 
-class DeviceLogRepositoy extends Repository {
+class DeviceLogRepository extends Repository {
   constructor() {
     super();
     this.table = "device_logs";
@@ -28,4 +28,4 @@ class DeviceLogRepositoy extends Repository {
   }
 }
 
-module.exports = DeviceLogRepositoy;
+module.exports = DeviceLogRepository;
