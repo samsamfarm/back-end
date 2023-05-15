@@ -1,4 +1,4 @@
-const { BadRequest, InternalServerError, Unauthorized } = require('../errors');
+const { BadRequest, Unauthorized } = require('../errors');
 const UserRepository = require('../repositories/userRepository');
 const DeviceRepository = require('../repositories/deviceRepository');
 
@@ -51,16 +51,16 @@ class UserService {
 
      async getLoginInfoByUser(user) {
         const userInfo = await this.repository.findByEmail(user.email);
-        const deivce = await this.deviceRepository.getDeviceByUserId(userInfo.id);
+        const device = await this.deviceRepository.getDeviceByUserId(userInfo.id);
         if (userInfo == null) {
             throw new Error("Not Found User");
         }
 
         // Create JWT
         const tokenPayload = {
-            id: userInfo.id,
-            email: userInfo.email,
-            deivce_id: deivce?.id || null,
+          id: userInfo.id,
+          email: userInfo.email,
+          device_id: device?.id || null,
         };
 
         const tokenOptions = {
@@ -77,12 +77,7 @@ class UserService {
     }
 
     async updateUser(user) {
-        const result = await this.repository.updateUser(user);
-        if (result == 1) {
-            const userData = this.findUserByUserId(user.id);
-            return userData;
-        }
-        throw new InternalServerError("Update Failed");
+        return this.repository.updateUser(user);
     }
 
     deleteUser(user) {

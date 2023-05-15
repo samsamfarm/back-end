@@ -1,4 +1,4 @@
-const { BadRequest, InternalServerError } = require("../errors");
+const { BadRequest } = require("../errors");
 
 const PlantRepository = require("../repositories/plantRepository");
 
@@ -7,13 +7,8 @@ class PlantService {
     this.plantRepository = new PlantRepository();
   }
 
-  async createPlant(data) {
-    const newPlantData = await this.plantRepository.createPlant(data);
-    if (newPlantData?.length > 0) {
-      return newPlantData;
-    }
-
-    throw new InternalServerError({device: "create_failed"});
+  createPlant(data) {
+    return this.plantRepository.createPlant(data);
   }
 
   async getPlantByUserId(userId) {
