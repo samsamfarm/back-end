@@ -13,11 +13,19 @@ class PlantRepository extends Repository {
       plant_type: data.plantType,
     });
   }
-  getPlantByUserId(userId) {
-    return this.db(this.table).select("*").where({
-      user_id: userId,
-    });
+  
+  async getPlantByUserId(userId) {
+    const result = await this.db(this.table)
+      .join("users", "plants.user_id", "=", "users.id")
+      .select(
+        "plants.*",
+        "users.nickname as nickname",
+        "users.mbti as mbti")
+      .where({ user_id: userId});
+
+    return result
   }
+
   getAllPlant(page, perPage) {
     const offset = (page - 1) * perPage;
     

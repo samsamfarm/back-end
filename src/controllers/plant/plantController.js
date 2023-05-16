@@ -54,7 +54,7 @@ const router = express.Router();
  *                         example: 2
  *                       current_grade:
  *                         type: string
- *                         example: "A"
+ *                         example: "1"
  *                       plant_grade_update_time:
  *                         type: string
  *                         example: "2023-05-14T12:34:56Z"
@@ -170,10 +170,16 @@ router.post("/", async (req, res, next) => {
  *                         example: "Aloe Vera"
  *                       current_grade:
  *                         type: string
- *                         example: "Good"
+ *                         example: "1"
  *                       plant_grade_update_time:
  *                         type: string
  *                         example: "2023-05-14T12:34:56Z"
+ *                       nickname:
+ *                         type: string
+ *                         example: "핸섬호성"
+ *                       mbti:
+ *                         type: string
+ *                         example: "CUTE"  
  *                       created_at:
  *                         type: string
  *                         example: "2023-05-14T12:34:56Z"
