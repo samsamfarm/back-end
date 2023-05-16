@@ -30,8 +30,8 @@ class PlantRepository extends Repository {
     const offset = (page - 1) * perPage;
     
     return this.db(this.table)
-      .select("*")
-      .from("plants")
+      .join("users", "plants.user_id", "=", "users.id")
+      .select("plants.*", "users.nickname as nickname")
       .limit(perPage)
       .offset(offset);
   }

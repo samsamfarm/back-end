@@ -180,6 +180,10 @@ const commentService = new CommentService();
  *                       type: string
  *                     comment_created_at:
  *                       type: string
+ *                     nickname:
+ *                       type: string
+ *                     user_id:
+ *                       type: number  
  *             example:
  *               data:
  *                 title: "게시물 제목"
@@ -188,6 +192,8 @@ const commentService = new CommentService();
  *                 view_count: 100
  *                 comment: "댓글 내용"
  *                 comment_created_at: "2023-05-15T09:12:34Z"
+ *                 nickname: "이어진"
+ *                 user_id: 13
  *       400:
  *         description: BAD_REQUEST.
  */
