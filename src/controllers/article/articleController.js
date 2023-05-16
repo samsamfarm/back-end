@@ -194,9 +194,11 @@ const commentService = new CommentService();
   router.get("/:articleId", async(req, res, next) => {
     try {
       const {articleId} = req.params;
+
       const getArticleWithComment = await articleService.getArticleWithComment(articleId);
-      articleService.countView(articleId);
-      res.send({ data: getArticleWithComment });
+      await articleService.countView(articleId);
+      
+      res.json({ data: getArticleWithComment });
     
     } catch(err) {
       next(err);

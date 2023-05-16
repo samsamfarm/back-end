@@ -18,7 +18,7 @@ class ArticleRepository extends Repository {
   async getArticleWithComment(article_id) {
     const result = await this.db(this.table)
       .join("comments", "articles.id", "=", "comments.article_id")
-      .join("users", "articles.user_id", "=", "users.id")
+      .join("users", "comments.user_id", "=", "users.id")
       .select(
         "articles.title",
         "articles.content",
@@ -26,10 +26,13 @@ class ArticleRepository extends Repository {
         "articles.view_count",
         "comments.content as comment",
         "comments.created_at as comment_created_at",
-        "users.nickname as nickname"
+        "users.nickname as nickname",
+        "users.id as user_id"
       )
       .where("articles.id", article_id);
+      console.log(result)
     return result;
+    
   }
 
   getAllArticle(page, perPage) {
