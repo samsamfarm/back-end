@@ -12,18 +12,19 @@ class PlantService {
   }
 
   async getPlantByUserId(userId) {
-    const plantInfoByUserId = await this.plantRepository.getPlantByUserId(userId);
+    const plantInfoByUserId = await this.plantRepository.getPlantByUserId(
+      userId
+    );
     if (plantInfoByUserId?.length > 0) {
       return plantInfoByUserId;
     }
 
-    throw new BadRequest({plant: "not_found"});
+    throw new BadRequest({ plant: "not_found" });
   }
-  getAllPlant() {
-    const getPlants = this.plantRepository.getAllPlant();
-      return getPlants;
+  getAllPlant(page, perPage) {
+    const getPlants = this.plantRepository.getAllPlant(page, perPage);
+    return getPlants;
   }
-
 }
 
 module.exports = PlantService;

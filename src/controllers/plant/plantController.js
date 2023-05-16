@@ -16,6 +16,17 @@ const router = express.Router();
  *     tags: [plant]
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: 페이지 번호
+ *       - in: query
+ *         name: perPage
+ *         schema:
+ *           type: integer
+ *         description: 페이지당 아이템 수  
  *     responses:
  *       200:
  *         description: 전체 작물 조회 성공.
@@ -59,7 +70,8 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    const allPlants = await plantService.getAllPlant();
+    const { page, perPage } = req.query;
+    const allPlants = await plantService.getAllPlant(page, perPage);
     res.json({ data: allPlants });
   } catch (err) {
     next(err);

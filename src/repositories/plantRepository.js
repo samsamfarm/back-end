@@ -18,8 +18,14 @@ class PlantRepository extends Repository {
       user_id: userId,
     });
   }
-  getAllPlant() {
-    return this.db(this.table).select("*").from("plants");   
+  getAllPlant(page, perPage) {
+    const offset = (page - 1) * perPage;
+    
+    return this.db(this.table)
+      .select("*")
+      .from("plants")
+      .limit(perPage)
+      .offset(offset);
   }
 }
 module.exports = PlantRepository;
