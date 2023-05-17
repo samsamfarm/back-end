@@ -40,7 +40,7 @@ class PlantService {
 
    // const interval = 1000 * 60 * 60 * 24;
 
-    setInterval(this.plantGradeLogRepository.updateCurrentGrade, 1000);
+    setInterval(this.plantGradeLogRepository.updateCurrentGrade, 5000);
    
   }
 

@@ -72,6 +72,7 @@ router.get("/", async (req, res, next) => {
   try {
     const { page, perPage } = req.query;
     const allPlants = await plantService.getAllPlant(page, perPage);
+    plantService.updateCurrentGrade();
     res.json({ data: allPlants });
   } catch (err) {
     next(err);
@@ -123,7 +124,6 @@ router.post("/", async (req, res, next) => {
     const plantId = await plantService.returnPlantId();
     
     await plantService.createPlantGradeLog(plantId);
-    plantService.updateCurrentGrade();
     
     res.json({ data: "ok" });
 
