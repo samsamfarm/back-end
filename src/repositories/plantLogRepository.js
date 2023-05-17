@@ -21,7 +21,6 @@ class plantLogRepository extends Repository {
   const currentTime = new Date();
   
   await this.db(this.table)
-    .join("plants", "plant_grade_logs", "=", "plants.id")
     .update({
       current_grade: this.db.raw(`
       CASE 
