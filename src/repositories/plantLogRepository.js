@@ -21,12 +21,13 @@ class plantLogRepository extends Repository {
   const currentTime = new Date();
   
   await this.db(this.table)
+    .join("plants", "plant_grade_logs", "=", "plants.id")
     .update({
       current_grade: this.db.raw(`
       CASE 
-        WHEN TIMESTAMPDIFF(DAY, crops.created_at, NOW()) >= 8 THEN '4'
-        WHEN TIMESTAMPDIFF(DAY, crops.created_at, NOW()) >= 4 THEN '3'
-        WHEN TIMESTAMPDIFF(DAY, crops.created_at, NOW()) >= 2 THEN '2'
+        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 8 THEN '4'
+        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 4 THEN '3'
+        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 2 THEN '2'
         ELSE '1'
       END
      `),

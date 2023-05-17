@@ -38,9 +38,9 @@ class PlantService {
 
   updateCurrentGrade(){
 
-    const interval = 1000 * 60 * 60 * 24;
+   // const interval = 1000 * 60 * 60 * 24;
 
-    setInterval(this.plantGradeLogRepository.updateCurrentGrade, interval);
+    setInterval(this.plantGradeLogRepository.updateCurrentGrade, 1000);
    
   }
 
