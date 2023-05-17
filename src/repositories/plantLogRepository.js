@@ -16,29 +16,29 @@ class plantLogRepository extends Repository {
     
   }
 
- async updateCurrentGrade() {
+//  async updateCurrentGrade() {
 
-  const currentTime = new Date();
+//   const currentTime = new Date();
   
-  await this.db(this.table)
-    .update({
-      current_grade: this.db.raw(`
-      CASE 
-        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 8 THEN '4'
-        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 4 THEN '3'
-        WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 2 THEN '2'
-        ELSE '1'
-      END
-     `),
-      current_grade_arrive_date: currentTime,
-    })
-    .where("growth_stage", "<>", "4");
+//   const a = this.db(this.table)
+//     .update({
+//       current_grade: this.db.raw(`
+//       CASE 
+//         WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 8 THEN '4'
+//         WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 4 THEN '3'
+//         WHEN TIMESTAMPDIFF(DAY, plants.created_at, NOW()) >= 2 THEN '2'
+//         ELSE '1'
+//       END
+//      `),
+//       current_grade_arrive_date: currentTime,
+//     })
+//     .where("growth_stage", "<>", "4");
 
-  await this.db(this.table)
-    .update({ last_grade_arrive_date: currentTime })
-    .where("current_grade", "4")
-    .andWhere("last_grade_arrive_date", null)
-  }
+//   await this.db(this.table)
+//     .update({ last_grade_arrive_date: currentTime })
+//     .where("current_grade", "4")
+//     .andWhere("last_grade_arrive_date", null) 
+//   }
 
 }
 

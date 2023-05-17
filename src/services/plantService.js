@@ -36,13 +36,13 @@ class PlantService {
     return this.plantGradeLogRepository.createPlantGradeLog(plantId);
   }
 
-  updateCurrentGrade(){
+  // updateCurrentGrade(){
 
-   // const interval = 1000 * 60 * 60 * 24;
+  //  // const interval = 1000 * 60 * 60 * 24;
 
-    setInterval(this.plantGradeLogRepository.updateCurrentGrade, 5000);
+  //   setInterval(this.plantGradeLogRepository.updateCurrentGrade, 5000);
    
-  }
+  // }
 
 }
 
