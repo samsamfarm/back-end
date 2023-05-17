@@ -1,14 +1,20 @@
 const { BadRequest } = require("../errors");
 
 const PlantRepository = require("../repositories/plantRepository");
+const PlantGradeLogRepository = require("../repositories/plantLogRepository")
 
 class PlantService {
   constructor() {
     this.plantRepository = new PlantRepository();
+    this.plantGradeLogRepository = new PlantGradeLogRepository();
   }
 
   createPlant(data) {
     return this.plantRepository.createPlant(data);
+  }
+
+  returnPlantId() {
+    return this.plantRepository.returnPlantId();
   }
 
   async getPlantByUserId(userId) {
@@ -25,6 +31,19 @@ class PlantService {
     const getPlants = this.plantRepository.getAllPlant(page, perPage);
     return getPlants;
   }
+
+  createPlantGradeLog(plantId) {
+    return this.plantGradeLogRepository.createPlantGradeLog(plantId);
+  }
+
+  updateCurrentGrade(){
+
+    const interval = 1000 * 60 * 60 * 24;
+
+    setInterval(this.plantGradeLogRepository.updateCurrentGrade, interval);
+   
+  }
+
 }
 
 module.exports = PlantService;

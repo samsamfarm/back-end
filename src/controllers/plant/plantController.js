@@ -118,10 +118,15 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const { data } = new CreatePlantRequestDTO(req.body);
-    console.log(data);
-  const np = await plantService.createPlant(data);
-    console.log(np);
+   
+    await plantService.createPlant(data);
+    const plantId = await plantService.returnPlantId();
+    
+    await plantService.createPlantGradeLog(plantId);
+    plantService.updateCurrentGrade();
+    
     res.json({ data: "ok" });
+
   } catch (err) {
     next(err);
   }
