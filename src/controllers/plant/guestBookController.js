@@ -1,12 +1,14 @@
 const express = require("express");
+const { CreateGuestBookDto } = require("../../dtos/guestBookDto")
+const GuestBookService = require("../../services/guestBookService")
 
-module.exports = (connection) => {
-  const router = express.Router();
+const router = express.Router();
+const guestBookService = new GuestBookService();
   /**
    * @swagger
    * /api/v1/plant/guest-book:
    *   post:
-   *     summary: 새로운 방명록 작성(미구현)
+   *     summary: 새로운 방명록 작성
    *     tags: [plant]
    *     requestBody:
    *       required: true
@@ -39,6 +41,11 @@ module.exports = (connection) => {
    */
   router.post("/", async (req, res, next) => {
     try {
+      const { user_id, writer, content } = req.body; 
+      const guestBook = new CreateGuestBookDto({ user_id, writer, content });
+
+      await guestBookService.createGuestBook(guestBook);
+
       res.json({ data: "ok" });
     } catch (error) {
       next(error);
@@ -67,9 +74,12 @@ module.exports = (connection) => {
    *       404:
    *         $ref: '#/components/responses/NotFound'
    */
-  router.get("/", async (req, res, next) => {
+  router.get("/:userId", async (req, res, next) => {
     try {
-      res.json({ data: "ok" });
+      const userId = req.params.userId;
+      const getGuestBook = await guestBookService.getGuestBook(userId);
+     
+      res.send({ data: getGuestBook });
     } catch (error) {
       next(error);
     }
@@ -147,5 +157,6 @@ module.exports = (connection) => {
       next(error);
     }
   });
-  return router;
-};
+
+  module.exports = router;
+

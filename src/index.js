@@ -47,6 +47,7 @@ class App {
     this.app.use("/api/v1/article",require("./controllers/article/articleController"));
     this.app.use("/api/v1/device", require("./controllers/deviceController"));
     this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
+    this.app.use("/api/v1/guestBook", require("./controllers/plant/guestBookController"));
     this.app.use("/api/v1/user", require("./controllers/userController"));
   }
 
