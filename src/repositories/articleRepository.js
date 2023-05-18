@@ -51,6 +51,7 @@ class ArticleRepository extends Repository {
         "articles.deleted_at",
         "users.nickname"
       )
+      .orderBy("articles.created_at", "desc")
       .limit(perPage)
       .offset(offset);
   }
