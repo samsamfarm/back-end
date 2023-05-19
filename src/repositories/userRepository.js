@@ -3,7 +3,6 @@ const { BadRequest } = require("../errors");
 
 
 // Reference : https://knexjs.org/guide/query-builder.html
-
 class UserRepository extends Repository {
   constructor() {
     super();

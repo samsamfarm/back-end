@@ -40,6 +40,34 @@ class plantLogRepository extends Repository {
 //     .andWhere("last_grade_arrive_date", null) 
 //   }
 
+  async updateCurrentGrade() {
+    try {
+      const currentDate = new Date();
+      const updateDate = new Date("2023-05-18");
+
+      if (currentDate > updateDate) {
+        await this.db(this.table)
+          .whereRaw("TIMESTAMPDIFF(DAY, current_grade_arrive_date, NOW()) >= 8")
+          .update({ current_grade: "4" });
+
+        await this.db(this.table)
+          .whereRaw("TIMESTAMPDIFF(DAY, current_grade_arrive_date, NOW()) >= 4")
+          .update({ current_grade: "3" });
+
+        await this.db(this.table)
+          .whereRaw("TIMESTAMPDIFF(DAY, current_grade_arrive_date, NOW()) >= 2")
+          .update({ current_grade: "2" });
+
+        await this.db(this.table)
+          .whereRaw("TRUE")
+          .update({ current_grade: "1" });
+      }  
+    } catch(error) {
+      next(error)
+    }
+    
+  }
+
 }
 
 module.exports = plantLogRepository;

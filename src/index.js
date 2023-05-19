@@ -7,6 +7,9 @@ const swaggerUi = require("swagger-ui-express");
 
 const specs = require("./config/swaggerConfig");
 const MqttHandler = require("./workers/mqtt/mqttWorker");
+//const PlantService = require("./services/plantService");
+
+//const plantService = new PlantService();
 
 const {
   BadRequest,
@@ -91,6 +94,10 @@ class App {
     new cron.CronJob("*/20 * * * * *", async () => {
       await this.mqttHandler.actuatorControlToDevice();
     }).start();
+
+    // new cron.CronJob("0 14 * * *", async () => {
+    //   await plantService.updateCurrentGrade();
+    // }).start(); 
   }
 }
 
