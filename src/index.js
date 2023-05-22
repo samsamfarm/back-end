@@ -1,77 +1,31 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const mysql = require('mysql2');
-const express = require('express');
-const cron = require('cron');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-const dbConnection = require('./models');
-const cors = require('cors');
+const cron = require("cron");
+const cors = require("cors");
+const express = require("express");
+const swaggerUi = require("swagger-ui-express");
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Samsamfarm API with Swagger',
-      version: '1.0.0',
-      description: 'Samsamfarm API with Swagger'
-    },
-    servers: [
-      {
-        url: 'http://localhost:5000',
-        description: 'Samsamfam server'
-      }
-    ],
-    tags: [
-      {
-        name: 'article',
-        description: 'About Article, Comment'
-      },
-      {
-        name: 'auth',
-        description: 'About User Register/Login'
-      },
-      {
-        name: 'device',
-        description: 'About Actuator, Device'
-      },
-      {
-        name: 'plant',
-        description: 'About Plant, Guest_book,Plant log'
-      },
-      {
-        name: 'user',
-        description: 'About User Info'
-      }
-    ]
-  },
-  apis: ['./src/controllers/*.js', './src/services/*.js', './src/errors/*.js', './src/controllers/articleController/*.js', './src/controllers/plantController/*.js']
-};
+const specs = require("./config/swaggerConfig");
+const MqttHandler = require("./workers/mqtt/mqttWorker");
+//const PlantService = require("./services/plantService");
 
-const specs = swaggerJsdoc(options);
+//const plantService = new PlantService();
 
-const { BadRequest, Unauthorized, Forbidden, InternalServerError, NotFound } = require('./errors');
+const {
+  BadRequest,
+  Unauthorized,
+  Forbidden,
+  InternalServerError,
+  NotFound,
+} = require("./errors");
+const { verifyToken } = require("./middlewares");
+const morgan = require("morgan");
 
 class App {
   constructor() {
     this.app = express();
-    this.port = process.env.PORT || 5000;
-    this.connection = mysql.createConnection({
-      host: process.env.MYSQL_HOST,
-      port: process.env.MYSQL_PORT,
-      database: process.env.MYSQL_DB,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PW
-    });
-
-    this.connection.connect((err) => {
-      if (err) {
-        console.error('Error connectiong to database', err);
-      } else {
-        console.log('Connectd to Database!');
-      }
-    });
-
+    this.mqttHandler = new MqttHandler();
+    this.port = process.env?.API_PORT || 5000;
     this.registerMiddleware();
     this.registerRoutes();
     this.registerErrorHandlers();
@@ -84,19 +38,20 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cors());
+    this.app.use(morgan("combined"));
+    this.app.set("trust proxy", "127.0.0.1");
   }
 
   registerRoutes() {
-    // Routes 등록
-    // this.app.use("/api/users", usersRouter);
-    // this.app.use("/posts", postsRouter);
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+    this.app.use("/api/v1/auth", require("./controllers/authController"));
 
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-    this.app.use('/api/article', require('./controllers/articleController/article')(this.connection));
-    this.app.use('/api/auth', require('./controllers/auth')(this.connection));
-    this.app.use('/api/device', require('./controllers/device')(this.connection));
-    this.app.use('/api/plant', require('./controllers/plantController/plant')(this.connection));
-    this.app.use('/api/user', require('./controllers/user')());
+    this.app.use(verifyToken);
+    this.app.use("/api/v1/article",require("./controllers/article/articleController"));
+    this.app.use("/api/v1/device", require("./controllers/deviceController"));
+    this.app.use("/api/v1/plant", require("./controllers/plant/plantController"));
+    this.app.use("/api/v1/guestBook", require("./controllers/plant/guestBookController"));
+    this.app.use("/api/v1/user", require("./controllers/userController"));
   }
 
   registerErrorHandlers() {
@@ -119,7 +74,7 @@ class App {
         return;
       } else {
         console.error(err);
-        res.status(500).send({ message: 'INTERNAL_SERVER_ERROR' });
+        res.status(500).send({ message: "INTERNAL_SERVER_ERROR" });
         return;
       }
     });
@@ -133,11 +88,16 @@ class App {
   }
 
   scheduleJobs() {
+    this.mqttHandler.subscribeByDevicePlant();
+
     // cron 스케줄 등록
-    const job = new cron.CronJob('*/1 * * * *', () => {
-      console.log(`The time is now ${new Date()}`);
-    });
-    job.start();
+    new cron.CronJob("*/20 * * * * *", async () => {
+      await this.mqttHandler.actuatorControlToDevice();
+    }).start();
+
+    // new cron.CronJob("0 14 * * *", async () => {
+    //   await plantService.updateCurrentGrade();
+    // }).start(); 
   }
 }
 

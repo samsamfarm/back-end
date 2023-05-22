@@ -1,63 +1,67 @@
-const Repository = require("./repository");
-const dbConnection = require("../models/dbConnection");
+const { Repository } = require("./index");
 const { BadRequest } = require("../errors");
 
+
 // Reference : https://knexjs.org/guide/query-builder.html
+class UserRepository extends Repository {
+  constructor() {
+    super();
+      this.table = "users";
+  }
 
-module.exports = class UserRepository extends Repository {
-    constructor() {
-        super(dbConnection);
-        this.table = 'Users';
-    }
+  async findById(id) {
+    return this.__findByPrimaryKey(this.table, id);
+  }
 
-    async findById(id) {
-        const result = await this.__findByPrimaryKey(this.table, id);
-        if(result === undefined) throw new BadRequest("Not Found User");
-        return result;
-    }
+  findByEmail(email) {
+    return this.db(this.table).where("email", email).first();
+  }
 
-    async findByEmail(email) {
-        const result = await this.db(this.table).where('email', email).first();
-        if (result === undefined) throw new BadRequest("Not Found User");
-        return result;
-    }
+  async createUser(user) {
+    const userId = await this.db(this.table)
+      .insert({
+        email: user.email,
+        name: user.name,
+        nickname: user.nickname,
+        password: user.password,
+        mbti: user.mbti,
+        phone: user.phone,
+      })
+      // .catch((error) => {
+      //   if (error.errno == 1062) {
+      //     // FIXME: Repository 에서는 에러 핸들링을 해주면 안되고, 에러가 발생하지 않기 위해 미리 검증을 해주어야 한다.
+      //     throw new BadRequest({ email: "duplicate" });
+      //   } else {
+      //     console.error("email : failed", error);
+      //     throw new BadRequest({ email: "failed" });
+      //   }
+      // });
+      
+    const result = await this.findById(userId[0]);
+    return result;
+  }
 
-    async createUser(user) {
-        const userId = await this.db(this.table).insert(user)
-        .catch(error => {
-            console.log(String(error));
-            if (error.errno == 1062) {
-                throw new BadRequest("Create User Failed - Duplicate Email");
-            }
-            else {
-                throw new BadRequest("Create User Failed");
-            }
-        });
+  async updateUser(user) {
+    const result = await this.db(this.table).where("id", user.id).update({
+      name: user.name,
+      nickname: user.nickname,
+      password: user.password,
+      mbti: user.mbti,
+      phone: user.phone,
+      updated_at: user.updated_at,
+    });
 
-        const result = await this.findById(userId[0]);
-        return result;
-    }
+    return result;
+  }
 
-    async updateUser(user) {
-        const result = await this.db(this.table).where('id', user.id)
-        .update({
-            name: user.name,
-            nickname: user.nickname,
-            password: user.password,
-            mbti: user.mbti,
-            phone: user.phone,
-            updated_at: user.updated_at
-        });
+  async deleteUser(userId) {
+    const result = await this.db(this.table).where("id", userId).update({
+      deleted_at: new Date(),
+    });
 
-        return result;
-    }
+    return result;
+  }
 
-    async deleteUser(userId) {
-        const result = await this.db(this.table).where('id', userId)
-        .update({
-            deleted_at: new Date()
-        });
-
-        return result;
-    }
 }
+
+module.exports = UserRepository;

@@ -1,7 +1,19 @@
+const knexClient = require("../config/knexClient");
+
 const userRepository = require("./userRepository");
-const articleRepository = require("./articleRepository");
+
+
+class Repository {
+  constructor() {
+    this.db = knexClient;
+  }
+
+  __findByPrimaryKey(table, id) {
+    return this.db(table).where("id", id).first();
+  }
+}
 
 module.exports = {
-    userRepository,
-    articleRepository
-}
+  Repository,
+  userRepository,
+};
